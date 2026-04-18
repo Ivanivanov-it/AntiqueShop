@@ -2,20 +2,20 @@
 import Layout from '../layouts/Layout.astro';
 
 const categories = [
-  { name: 'Vintage Furniture', description: 'Timeless chairs, tables, and cabinets from every era.', count: 124 },
-  { name: 'Classic Timepieces', description: 'Exquisite grandfather clocks and rare pocket watches.', count: 42 },
-  { name: 'Rare Porcelain', description: 'Delicate china and ceramics with rich historical value.', count: 86 },
-  { name: 'Estate Jewelry', description: 'Beautiful pieces from across the centuries.', count: 54 },
-  { name: 'Art & Prints', description: 'Original paintings and rare lithographs.', count: 98 },
-  { name: 'Collectibles', description: 'Unique items that tell a story.', count: 156 },
+  { name: 'Класически часовници', description: 'Изискани стенни часовници и редки джобни часовници.', count: 42 },
+  { name: 'Редки порцелани', description: 'Нежна китайска и керамика с богата историческа стойност.', count: 86 },
+  { name: 'Антикварни бижута', description: 'Красиви произведения от различни векове.', count: 54 },
+  { name: 'Изкуство и графики', description: 'Оригинални картини и редки литографии.', count: 98 },
+  { name: 'Колекционерски предмети', description: 'Уникални предмети, които разказват история.', count: 156 },
+  { name: 'Облекло', description: 'Исторически облекла и аксесоари.', count: 33 },
 ];
 ---
 
 <Layout>
   <div class="py-16 bg-stone-100 border-b border-stone-200">
     <div class="container mx-auto px-4">
-      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">Explore Our Collection</h1>
-      <p class="text-stone-600">Browse through our meticulously curated categories of rare and beautiful antiques.</p>
+      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">Изследвайте нашата колекция</h1>
+      <p class="text-stone-600">Разгледайте нашите внимателно подбрани категории от редки и красиви антики.</p>
     </div>
   </div>
 
@@ -33,14 +33,14 @@ const categories = [
                   {category.name}
                 </h3>
                 <span class="bg-stone-100 text-stone-500 text-xs font-bold px-2 py-1 rounded">
-                  {category.count} items
+                  {category.count} предмета
                 </span>
               </div>
               <p class="text-stone-600 mb-6 flex-grow leading-relaxed">
                 {category.description}
               </p>
               <div class="text-amber-700 font-bold flex items-center group-hover:gap-2 transition-all">
-                Browse Collection <span>&rarr;</span>
+                Разгледайте колекцията <span>&rarr;</span>
               </div>
             </div>
           </div>
@@ -51,12 +51,12 @@ const categories = [
 
   <div class="bg-amber-50 border-y border-amber-100 py-16">
     <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl font-serif font-bold text-stone-800 mb-4">Looking for something specific?</h2>
+      <h2 class="text-3xl font-serif font-bold text-stone-800 mb-4">Търсите нещо конкретно?</h2>
       <p class="text-stone-600 mb-8 max-w-xl mx-auto">
-        If you're hunting for a particular piece, our expert team can help you source it through our global network.
+        Ако търсите конкретен артикул, нашият екип от експерти може да ви помогне да го намерите чрез нашата глобална мрежа.
       </p>
       <a href="/contact" class="inline-block bg-stone-800 text-white px-8 py-3 rounded hover:bg-stone-700 transition-colors">
-        Inquire About Sourcing
+        Запитване за снабдяване
       </a>
     </div>
   </div>
