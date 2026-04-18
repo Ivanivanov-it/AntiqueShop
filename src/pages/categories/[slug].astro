@@ -1,0 +1,122 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { categories, getSlug } from '../../utils/categories.js';
+
+export function getStaticPaths() {
+  return categories.map(category => ({
+    params: { slug: getSlug(category) },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const subCategories = [
+  "Джобни часновници",
+  "Настолни часовници",
+  "Ръчни часовници",
+  "Стенни часовници",
+  "Други"
+];
+
+// Placeholder items for each category
+const items = [
+  { id: 1, name: "Античен предмет 1", price: "150 лв.", image: "[Image 1]" },
+  { id: 2, name: "Античен предмет 2", price: "280 лв.", image: "[Image 2]" },
+  { id: 3, name: "Античен предмет 3", price: "450 лв.", image: "[Image 3]" },
+  { id: 4, name: "Античен предмет 4", price: "120 лв.", image: "[Image 4]" },
+  { id: 5, name: "Античен предмет 5", price: "890 лв.", image: "[Image 5]" },
+  { id: 6, name: "Античен предмет 6", price: "320 лв.", image: "[Image 6]" },
+];
+---
+
+<Layout>
+  <div class="py-12 bg-stone-100 border-b border-stone-200">
+    <div class="container mx-auto px-4">
+      <div class="text-sm text-stone-500 mb-4">
+        <a href="/" class="hover:text-amber-700">Начало</a> / 
+        <a href="/categories" class="hover:text-amber-700">Категории</a> / 
+        <span class="text-stone-800">{category.name}</span>
+      </div>
+      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">{category.name}</h1>
+      <p class="text-stone-600 max-w-2xl">{category.description}</p>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-12">
+    <div class="flex flex-col lg:flex-row gap-12">
+      <!-- Sidebar / Sub-categories -->
+      <aside class="w-full lg:w-64 flex-shrink-0">
+        <div class="bg-white border border-stone-200 rounded p-6 sticky top-24">
+          <h2 class="text-lg font-serif font-bold text-stone-800 mb-6 border-b border-stone-100 pb-2">Подкатегории</h2>
+          <ul class="space-y-3">
+            {subCategories.map(sub => (
+              <li>
+                <a href="#" class="text-stone-600 hover:text-amber-700 flex items-center group transition-colors">
+                  <span class="w-2 h-2 bg-stone-200 rounded-full mr-3 group-hover:bg-amber-700 transition-colors"></span>
+                  {sub}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div class="mt-10 pt-8 border-t border-stone-100">
+            <h3 class="text-sm font-bold text-stone-800 uppercase tracking-wider mb-4">Филтрирай</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-stone-500 mb-2 uppercase">Цена</label>
+                <div class="flex gap-2">
+                  <input type="text" placeholder="Мин" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
+                  <input type="text" placeholder="Макс" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Items Grid -->
+      <div class="flex-grow">
+        <div class="flex justify-between items-center mb-8 bg-stone-50 p-4 rounded border border-stone-200">
+          <p class="text-stone-600 text-sm">Показване на <span class="font-bold text-stone-800">{items.length}</span> резултата</p>
+          <select class="bg-transparent text-sm text-stone-800 font-medium focus:outline-none cursor-pointer">
+            <option>Най-нови</option>
+            <option>Цена: възходяща</option>
+            <option>Цена: низходяща</option>
+            <option>Популярност</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {items.map(item => (
+            <div class="group cursor-pointer">
+              <div class="aspect-[4/5] bg-stone-200 relative overflow-hidden rounded mb-4">
+                <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
+                  {item.image}
+                </div>
+                <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
+                  <button class="w-full bg-white text-stone-900 py-2 text-sm font-bold shadow-lg hover:bg-stone-100">
+                    Виж детайли
+                  </button>
+                </div>
+              </div>
+              <h3 class="text-lg font-serif font-bold text-stone-800 group-hover:text-amber-700 transition-colors mb-1">
+                {item.name}
+              </h3>
+              <p class="text-amber-800 font-bold">{item.price}</p>
+            </div>
+          ))}
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-16 flex justify-center gap-2">
+          <button class="w-10 h-10 flex items-center justify-center rounded border border-amber-700 bg-amber-700 text-white font-bold">1</button>
+          <button class="w-10 h-10 flex items-center justify-center rounded border border-stone-200 text-stone-600 hover:border-amber-700 hover:text-amber-700 transition-colors">2</button>
+          <button class="w-10 h-10 flex items-center justify-center rounded border border-stone-200 text-stone-600 hover:border-amber-700 hover:text-amber-700 transition-colors">3</button>
+          <span class="flex items-center px-2">...</span>
+          <button class="w-10 h-10 flex items-center justify-center rounded border border-stone-200 text-stone-600 hover:border-amber-700 hover:text-amber-700 transition-colors">12</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

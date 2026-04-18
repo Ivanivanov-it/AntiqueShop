@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { categories, getSlug } from "../utils/categories.js";
 ---
 
 <!doctype html>
@@ -31,7 +32,7 @@ import "../styles/global.css";
 
 		<footer class="bg-stone-900 text-stone-300 py-12 mt-20">
 			<div class="container mx-auto px-4">
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 					<div>
 						<h3 class="text-xl font-serif font-bold text-white mb-4">Антикварен магазин Берлин</h3>
 						<p class="text-sm leading-relaxed">
@@ -39,9 +40,16 @@ import "../styles/global.css";
 						</p>
 					</div>
 					<div>
+						<h3 class="text-lg font-bold text-white mb-4">Категории</h3>
+						<ul class="space-y-2 text-sm">
+							{categories.slice(0, 10).map(category => (
+								<li><a href={`/categories/${getSlug(category)}`} class="hover:text-amber-500 transition-colors">{category.name}</a></li>
+							))}
+						</ul>
+					</div>
+					<div>
 						<h3 class="text-lg font-bold text-white mb-4">Бързи връзки</h3>
 						<ul class="space-y-2 text-sm">
-							<li><a href="/categories" class="hover:text-amber-500 transition-colors">Категории</a></li>
 							<li><a href="/about" class="hover:text-amber-500 transition-colors">За нас</a></li>
 							<li><a href="/contact" class="hover:text-amber-500 transition-colors">Свържете се с нас</a></li>
 						</ul>
