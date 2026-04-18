@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const categories = [
+  { name: 'Vintage Furniture', description: 'Timeless chairs, tables, and cabinets from every era.', count: 124 },
+  { name: 'Classic Timepieces', description: 'Exquisite grandfather clocks and rare pocket watches.', count: 42 },
+  { name: 'Rare Porcelain', description: 'Delicate china and ceramics with rich historical value.', count: 86 },
+  { name: 'Estate Jewelry', description: 'Beautiful pieces from across the centuries.', count: 54 },
+  { name: 'Art & Prints', description: 'Original paintings and rare lithographs.', count: 98 },
+  { name: 'Collectibles', description: 'Unique items that tell a story.', count: 156 },
+];
+---
+
+<Layout>
+  <div class="py-16 bg-stone-100 border-b border-stone-200">
+    <div class="container mx-auto px-4">
+      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">Explore Our Collection</h1>
+      <p class="text-stone-600">Browse through our meticulously curated categories of rare and beautiful antiques.</p>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {categories.map((category) => (
+        <a href={`/categories/${category.name.toLowerCase().replace(/\s+/g, '-')}`} class="group">
+          <div class="bg-white border border-stone-200 rounded overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1 h-full flex flex-col">
+            <div class="aspect-video bg-stone-300 flex items-center justify-center text-stone-500 italic">
+              [Image: {category.name}]
+            </div>
+            <div class="p-8 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-4">
+                <h3 class="text-2xl font-serif font-bold text-stone-800 group-hover:text-amber-700 transition-colors">
+                  {category.name}
+                </h3>
+                <span class="bg-stone-100 text-stone-500 text-xs font-bold px-2 py-1 rounded">
+                  {category.count} items
+                </span>
+              </div>
+              <p class="text-stone-600 mb-6 flex-grow leading-relaxed">
+                {category.description}
+              </p>
+              <div class="text-amber-700 font-bold flex items-center group-hover:gap-2 transition-all">
+                Browse Collection <span>&rarr;</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <div class="bg-amber-50 border-y border-amber-100 py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-serif font-bold text-stone-800 mb-4">Looking for something specific?</h2>
+      <p class="text-stone-600 mb-8 max-w-xl mx-auto">
+        If you're hunting for a particular piece, our expert team can help you source it through our global network.
+      </p>
+      <a href="/contact" class="inline-block bg-stone-800 text-white px-8 py-3 rounded hover:bg-stone-700 transition-colors">
+        Inquire About Sourcing
+      </a>
+    </div>
+  </div>
+</Layout>
