@@ -13,24 +13,53 @@ collections:
     slug: "{{slug}}"
 
     fields:
-      - { label: "Name", name: "title", widget: "string" }
+      - label: "Name"
+        name: "title"
+        widget: "string"
 
-      - { label: "Description", name: "description", widget: "text" }
+      - label: "Description"
+        name: "description"
+        widget: "text"
 
-      - { label: "Category", name: "category", widget: "select",
-          options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Сувенири и Подараци","Инструменти и Ножове","Стари Уреди и Апарати","Военни предмети"] }
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        options:
+          - "Антикварни часовници"
+          - "Порцелан"
+          - "Старинни бижута"
+          - "Изобразително изкуство"
+          - "Колекционерски предмети"
+          - "Етника и Фолклор"
+          - "Сувенири и Подараци"
+          - "Инструменти и Ножове"
+          - "Стари Уреди и Апарати"
+          - "Военни предмети"
 
-      - { label: "Subcategory", name: "subcategory", widget: "string" }
+      - label: "Subcategory"
+        name: "subcategory"
+        widget: "string"
 
-      - { label: "Price", name: "price", widget: "number" }
+      - label: "Price"
+        name: "price"
+        widget: "number"
 
-      - { label: "Image", name: "image", widget: "image" }
+      - label: "Image"
+        name: "image"
+        widget: "image"
 
-      - { label: "Featured", "name": "featured", widget: "boolean"}
+      - label: "Featured"
+        name: "featured"
+        widget: "boolean"
 
-      - { label: "Available", "name": "available", widget: "boolean"}
+      - label: "Available"
+        name: "available"
+        widget: "boolean"
 
-      - { label: "New", "name": "new", widget: "boolean"}
+      - label: "New"
+        name: "new"
+        widget: "boolean"
 
-
-      - { label: "Views", "name": "views", widget: "number"}
+      - label: "Views"
+        name: "views"
+        widget: "number"
