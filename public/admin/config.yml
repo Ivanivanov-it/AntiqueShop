@@ -1,0 +1,36 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "antiques"
+    label: "Antiques"
+    folder: "src/content/antiques"
+    create: true
+    slug: "{{slug}}"
+
+    fields:
+      - { label: "Name", name: "title", widget: "string" }
+
+      - { label: "Description", name: "description", widget: "text" }
+
+      - { label: "Category", name: "category", widget: "select",
+          options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Сувенири и Подараци","Инструменти и Ножове","Стари Уреди и Апарати","Военни предмети"] }
+
+      - { label: "Subcategory", name: "subcategory", widget: "string" }
+
+      - { label: "Price", name: "price", widget: "number" }
+
+      - { label: "Image", name: "image", widget: "image" }
+
+      - { label: "Featured", "name": "featured", widget: "boolean"}
+
+      - { label: "Available", "name": "available", widget: "boolean"}
+
+      - { label: "New", "name": "new", widget: "boolean"}
+
+
+      - { label: "Views", "name": "views", widget: "number"}
