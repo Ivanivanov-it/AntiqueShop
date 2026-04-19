@@ -8,7 +8,13 @@ const antiques = defineCollection({
     description: z.string(),
     category: z.string(),
     subcategory: z.string(),
-    image: z.union([z.string(), z.array(z.string())]),
+    images: z.array(z.union([
+      z.string(),
+      z.object({
+        url: z.string(),
+        caption: z.string().optional(),
+      })
+    ])),
     price: z.number().min(0),
     featured: z.boolean().default(false).optional(),
     available: z.boolean().default(true).optional(),

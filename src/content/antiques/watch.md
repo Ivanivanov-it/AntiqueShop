@@ -4,9 +4,17 @@ description: "A rare ceramic vase from 19th century."
 category: "Антикварни часовници"
 subcategory: "Джобни часновници"
 price: 255
-image: 
-  - "/images/uploads/watch3.jpg"
-  - "/images/uploads/watch1.webp"
-  - "/images/uploads/watch2.jpg"
-  - "/images/uploads/watch4.jpg"
+featured: false
+available: true
+new: false
+views: 0
+images:
+  - url: "/images/uploads/watch3.jpg"
+    caption: ""
+  - url: "/images/uploads/watch1.webp"
+    caption: ""
+  - url: "/images/uploads/watch2.jpg"
+    caption: ""
+  - url: "/images/uploads/watch4.jpg"
+    caption: ""
 ---

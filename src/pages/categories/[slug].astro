@@ -85,9 +85,9 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
             {categoryItems.map(item => (
               <div class="group cursor-pointer">
                 <div class="aspect-[4/5] bg-stone-200 relative overflow-hidden rounded mb-4">
-                  {item.data.image ? (
+                  {item.data.images && item.data.images.length > 0 ? (
                     <img 
-                      src={Array.isArray(item.data.image) ? item.data.image[0] : item.data.image} 
+                      src={typeof item.data.images[0] === 'string' ? item.data.images[0] : item.data.images[0].url} 
                       alt={item.data.title} 
                       class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />

@@ -18,9 +18,8 @@ const { Content } = await render(item);
 // Mocking views for now if not present or 0
 const views = data.views || Math.floor(Math.random() * 500) + 100;
 
-// Supporting 1 or more images.
-// For now, if 'image' is a string, we'll use it as the main image.
-const images = Array.isArray(data.image) ? data.image : [data.image];
+// Supporting 1 or more images from the new 'images' field
+const images = (data.images || []).map(img => typeof img === 'string' ? img : img.url);
 
 // Find category slug for breadcrumbs
 const category = categories.find(c => c.name === data.category);
@@ -137,7 +136,8 @@ const categorySlug = category ? getSlug(category) : 'all';
               Запитване за продукта
             </a>
           </div>
-
+          
+          
         </div>
       </div>
     </div>
