@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import { categories, getSlug } from "../utils/categories.js";
+
+const { bodyClass = "bg-stone-50" } = Astro.props;
 ---
 
 <!doctype html>
@@ -15,7 +17,7 @@ import { categories, getSlug } from "../utils/categories.js";
 
 
 	</head>
-	<body class="bg-stone-50 text-stone-900 flex flex-col min-h-screen">
+	<body class={`${bodyClass} text-stone-900 flex flex-col min-h-screen`}>
 		<header class="bg-white shadow-sm sticky top-0 z-50">
 			<nav class="container mx-auto px-4 py-6 flex justify-between items-center">
 				<a href="/"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-24" /></a>

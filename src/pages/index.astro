@@ -2,11 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout>
+<Layout bodyClass="bg-[#003000]">
   <!-- Hero Section -->
   <section class="relative h-[80vh] flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 bg-stone-900/40 z-10"></div>
-    <div class="absolute inset-0 bg-stone-300 flex items-center justify-center text-stone-500 italic text-2xl">
+    <div class="absolute inset-0 bg-stone-900/60 z-10"></div>
+    <div class="absolute inset-0 bg-[#003000] flex items-center justify-center text-emerald-100/20 italic text-2xl">
       [Hero Background Image: Elegant Antique Living Room]
     </div>
     <div class="relative z-20 container mx-auto px-4 text-center text-white">
@@ -28,14 +28,14 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Featured Section -->
-  <section class="py-24 bg-white">
+  <section class="py-24 bg-[#003000]">
     <div class="container mx-auto px-4">
       <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
         <div class="max-w-xl">
-          <h2 class="text-4xl font-serif font-bold text-stone-800 mb-4">Нови постъпления</h2>
-          <p class="text-stone-600">Разгледайте последните добавки в нашата галерия, подбрани за тяхното изключително качество и историческо значение.</p>
+          <h2 class="text-4xl font-serif font-bold text-white mb-4">Нови постъпления</h2>
+          <p class="text-stone-300">Разгледайте последните добавки в нашата галерия, подбрани за тяхното изключително качество и историческо значение.</p>
         </div>
-        <a href="/categories" class="text-amber-700 font-bold border-b-2 border-amber-700 pb-1 hover:text-amber-600 hover:border-amber-600 transition-all">
+        <a href="/categories" class="text-amber-500 font-bold border-b-2 border-amber-500 pb-1 hover:text-amber-400 hover:border-amber-400 transition-all">
           Виж всички артикули &rarr;
         </a>
       </div>
@@ -43,8 +43,8 @@ import Layout from '../layouts/Layout.astro';
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[1, 2, 3, 4].map((i) => (
           <div class="group cursor-pointer">
-            <div class="aspect-[3/4] bg-stone-200 mb-4 overflow-hidden rounded shadow-sm relative">
-              <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
+            <div class="aspect-[3/4] bg-stone-800 mb-4 overflow-hidden rounded shadow-sm relative border border-white/5">
+              <div class="absolute inset-0 flex items-center justify-center text-stone-500 italic">
                 [Featured Item {i}]
               </div>
               <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-all duration-300"></div>
@@ -54,11 +54,11 @@ import Layout from '../layouts/Layout.astro';
                 </button>
               </div>
             </div>
-            <h3 class="text-lg font-serif font-bold text-stone-800 mb-1 group-hover:text-amber-700 transition-colors">
+            <h3 class="text-lg font-serif font-bold text-white mb-1 group-hover:text-amber-500 transition-colors">
               {i === 1 ? '18th Century French Armchair' : i === 2 ? 'Victorian Pocket Watch' : i === 3 ? 'Ming Dynasty Style Vase' : 'Art Deco Sideboard'}
             </h3>
-            <p class="text-stone-500 text-sm mb-2">{i === 1 ? 'Louis XV Style' : i === 2 ? 'Gold Plated' : i === 3 ? 'Blue & White' : 'Walnut Wood'}</p>
-            <p class="text-amber-800 font-bold font-serif">${(i * 1250).toLocaleString()}</p>
+            <p class="text-stone-400 text-sm mb-2">{i === 1 ? 'Louis XV Style' : i === 2 ? 'Gold Plated' : i === 3 ? 'Blue & White' : 'Walnut Wood'}</p>
+            <p class="text-amber-500 font-bold font-serif">${(i * 1250).toLocaleString()}</p>
           </div>
         ))}
       </div>
@@ -66,34 +66,35 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- CTA Section -->
-  <section class="py-24 bg-stone-100 border-y border-stone-200">
+  <section class="py-24 bg-[#003000] border-y border-white/5">
     <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-      <div class="order-2 md:order-1 aspect-video bg-stone-300 flex items-center justify-center text-stone-500 italic rounded-lg shadow-xl">
+      <div class="order-2 md:order-1 aspect-video bg-stone-800 flex items-center justify-center text-stone-500 italic rounded-lg shadow-xl border border-white/5">
         [Image: Close-up of restoration work]
       </div>
       <div class="order-1 md:order-2">
-        <h2 class="text-4xl font-serif font-bold text-stone-800 mb-6">Услуги по възстановяване на антики</h2>
-        <p class="text-stone-600 mb-8 leading-relaxed">
+        <h2 class="text-4xl font-serif font-bold text-white mb-6">Услуги по възстановяване на антики</h2>
+        <p class="text-stone-300 mb-8 leading-relaxed">
           Нашите майстори занаятчии се специализират в вдъхването на нов живот на повредени антики, като същевременно запазват оригиналния им характер и историческа цялост.
         </p>
         <ul class="space-y-4 mb-10">
-          <li class="flex items-center text-stone-700">
+          <li class="flex items-center text-stone-200">
             <span class="w-6 h-6 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs mr-3 font-bold">✓</span>
             Традиционно френско полиране
           </li>
-          <li class="flex items-center text-stone-700">
+          <li class="flex items-center text-stone-200">
             <span class="w-6 h-6 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs mr-3 font-bold">✓</span>
             Ремонт на антикварни часовници
           </li>
-          <li class="flex items-center text-stone-700">
+          <li class="flex items-center text-stone-200">
             <span class="w-6 h-6 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs mr-3 font-bold">✓</span>
             Обшивка с периодични тъкани
           </li>
         </ul>
-        <a href="/contact" class="inline-block border-2 border-stone-800 text-stone-800 px-8 py-3 rounded font-bold hover:bg-stone-800 hover:text-white transition-all">
+        <a href="/contact" class="inline-block border-2 border-white text-white px-8 py-3 rounded font-bold hover:bg-white hover:text-[#003000] transition-all">
           Запитване за възстановяване
         </a>
       </div>
     </div>
   </section>
+</Layout>
 </Layout>
