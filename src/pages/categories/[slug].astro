@@ -59,8 +59,8 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
               <div>
                 <label class="block text-xs font-bold text-stone-500 mb-2 uppercase">Цена</label>
                 <div class="flex gap-2">
-                  <input type="text" placeholder="Мин" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
-                  <input type="text" placeholder="Макс" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
+                  <input type="number" id="min-price" placeholder="Мин" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
+                  <input type="number" id="max-price" placeholder="Макс" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
                 </div>
               </div>
             </div>
@@ -71,47 +71,50 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
       <!-- Items Grid -->
       <div class="flex-grow">
         <div class="flex justify-between items-center mb-8 bg-stone-50 p-4 rounded border border-stone-200">
-          <p class="text-stone-600 text-sm">Показване на <span class="font-bold text-stone-800">{categoryItems.length}</span> резултата</p>
-          <select class="bg-transparent text-sm text-stone-800 font-medium focus:outline-none cursor-pointer">
-            <option>Най-нови</option>
-            <option>Цена: възходяща</option>
-            <option>Цена: низходяща</option>
-            <option>Популярност</option>
+          <p class="text-stone-600 text-sm">Показване на <span id="results-count" class="font-bold text-stone-800">{categoryItems.length}</span> резултата</p>
+          <select id="sort-by" class="bg-transparent text-sm text-stone-800 font-medium focus:outline-none cursor-pointer">
+            <option value="newest">Най-нови</option>
+            <option value="price-asc">Цена: възходяща</option>
+            <option value="price-desc">Цена: низходяща</option>
           </select>
         </div>
 
-        {categoryItems.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {categoryItems.map(item => (
-              <div class="group cursor-pointer">
-                <div class="aspect-[4/5] bg-stone-200 relative overflow-hidden rounded mb-4">
-                  {item.data.images && item.data.images.length > 0 ? (
-                    <img 
-                      src={typeof item.data.images[0] === 'string' ? item.data.images[0] : item.data.images[0].url} 
-                      alt={item.data.title} 
-                      class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                  ) : (
-                    <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
-                      [Няма изображение]
-                    </div>
-                  )}
-                  <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-300"></div>
-                  <div class="absolute bottom-4 left-4 right-4 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
-                    <a href={`/antiques/${item.id}`} class="block w-full bg-white text-stone-900 py-2 text-center text-sm font-bold shadow-lg hover:bg-stone-100">
-                      Виж детайли
-                    </a>
+        <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {categoryItems.map(item => (
+            <div class="item-card group cursor-pointer" data-price={item.data.price}>
+              <div class="aspect-[4/5] bg-stone-200 relative overflow-hidden rounded mb-4">
+                {item.data.images && item.data.images.length > 0 ? (
+                  <img 
+                    src={typeof item.data.images[0] === 'string' ? item.data.images[0] : item.data.images[0].url} 
+                    alt={item.data.title} 
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
+                    [Няма изображение]
                   </div>
+                )}
+                <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-300"></div>
+                <div class="absolute bottom-4 left-4 right-4 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
+                  <a href={`/antiques/${item.id}`} class="block w-full bg-white text-stone-900 py-2 text-center text-sm font-bold shadow-lg hover:bg-stone-100">
+                    Виж детайли
+                  </a>
                 </div>
-                <h3 class="text-lg font-serif font-bold text-stone-800 group-hover:text-amber-700 transition-colors mb-1">
-                  {item.data.title}
-                </h3>
-                <p class="text-stone-500 text-sm mb-2">{item.data.subcategory}</p>
-                <p class="text-amber-800 font-bold">€{item.data.price?.toLocaleString() || 'N/A'}</p>
               </div>
-            ))}
-          </div>
-        ) : (
+              <h3 class="text-lg font-serif font-bold text-stone-800 group-hover:text-amber-700 transition-colors mb-1">
+                {item.data.title}
+              </h3>
+              <p class="text-stone-500 text-sm mb-2">{item.data.subcategory}</p>
+              <p class="text-amber-800 font-bold">€{item.data.price?.toLocaleString() || 'N/A'}</p>
+            </div>
+          ))}
+        </div>
+
+        <div id="no-results" class="hidden py-20 text-center bg-stone-50 border border-dashed border-stone-200 rounded">
+          <p class="text-stone-500 italic">Няма намерени предмети в този ценови диапазон.</p>
+        </div>
+
+        {categoryItems.length === 0 && (
           <div class="py-20 text-center bg-stone-50 border border-dashed border-stone-200 rounded">
             <p class="text-stone-500 italic">В момента няма налични предмети в тази категория.</p>
           </div>
@@ -119,7 +122,7 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 
         {/* Pagination - Only show if many items */}
         {categoryItems.length > 12 && (
-          <div class="mt-16 flex justify-center gap-2">
+          <div id="pagination" class="mt-16 flex justify-center gap-2">
             <button class="w-10 h-10 flex items-center justify-center rounded border border-amber-700 bg-amber-700 text-white font-bold">1</button>
             <button class="w-10 h-10 flex items-center justify-center rounded border border-stone-200 text-stone-600 hover:border-amber-700 hover:text-amber-700 transition-colors">2</button>
             <span class="flex items-center px-2">...</span>
@@ -129,3 +132,66 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
     </div>
   </div>
 </Layout>
+
+<script>
+  function filterAndSort() {
+    const minPrice = parseFloat((document.getElementById('min-price') as HTMLInputElement).value) || 0;
+    const maxPrice = parseFloat((document.getElementById('max-price') as HTMLInputElement).value) || Infinity;
+    const sortBy = (document.getElementById('sort-by') as HTMLSelectElement).value;
+    const itemsGrid = document.getElementById('items-grid');
+    const noResults = document.getElementById('no-results');
+    const resultsCount = document.getElementById('results-count');
+    const cards = Array.from(document.querySelectorAll('.item-card')) as HTMLElement[];
+
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const price = parseFloat(card.dataset.price || '0');
+      const isVisible = price >= minPrice && price <= maxPrice;
+      card.style.display = isVisible ? 'block' : 'none';
+      if (isVisible) visibleCount++;
+    });
+
+    // Sorting
+    const sortedCards = cards.filter(card => card.style.display !== 'none').sort((a, b) => {
+      const priceA = parseFloat(a.dataset.price || '0');
+      const priceB = parseFloat(b.dataset.price || '0');
+      const titleA = (a.querySelector('h3')?.textContent || '').trim();
+      const titleB = (b.querySelector('h3')?.textContent || '').trim();
+
+      if (sortBy === 'price-asc') return priceA - priceB;
+      if (sortBy === 'price-desc') return priceB - priceA;
+      // If no date, use title as a fallback for stability
+      return titleA.localeCompare(titleB);
+    });
+
+    if (sortBy !== 'newest' || visibleCount < cards.length) {
+      // Re-append in sorted order if needed
+      sortedCards.forEach(card => itemsGrid?.appendChild(card));
+    }
+
+    if (visibleCount === 0 && cards.length > 0) {
+      noResults?.classList.remove('hidden');
+      itemsGrid?.classList.add('hidden');
+    } else {
+      noResults?.classList.add('hidden');
+      itemsGrid?.classList.remove('hidden');
+    }
+
+    if (resultsCount) resultsCount.textContent = visibleCount.toString();
+    
+    // Hide pagination if filtering is active
+    const pagination = document.getElementById('pagination');
+    if (pagination) {
+      if (visibleCount < cards.length) {
+        pagination.style.display = 'none';
+      } else {
+        pagination.style.display = 'flex';
+      }
+    }
+  }
+
+  document.getElementById('min-price')?.addEventListener('input', filterAndSort);
+  document.getElementById('max-price')?.addEventListener('input', filterAndSort);
+  document.getElementById('sort-by')?.addEventListener('change', filterAndSort);
+</script>
