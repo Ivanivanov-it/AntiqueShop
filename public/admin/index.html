@@ -25,8 +25,26 @@
       const DependentSelectControl = createClass({
   getInitialState() {
     const category = this.props.entry.getIn(['data', 'category']);
-    const options = SUBCATEGORIES[category] || [];
-    return { options, category };
+    return {
+      options: SUBCATEGORIES[category] || [],
+      category: category || '',
+    };
+  },
+
+  componentDidMount() {
+   
+    this._interval = setInterval(() => {
+      const category = this.props.entry.getIn(['data', 'category']);
+      if (category !== this.state.category) {
+        const options = SUBCATEGORIES[category] || [];
+        this.setState({ options, category });
+        this.props.onChange('');
+      }
+    }, 300);
+  },
+
+  componentWillUnmount() {
+    clearInterval(this._interval);
   },
 
   componentDidUpdate(prevProps) {
