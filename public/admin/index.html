@@ -23,57 +23,31 @@
       }
  
       const DependentSelectControl = createClass({
-  // This is the magic part. When ANY field in the CMS changes, 
-  // this function runs. We check if the 'category' specifically changed.
-  componentDidUpdate: function(prevProps) {
-    const oldEntry = prevProps.entry.getIn(['data', 'category']);
-    const newEntry = this.props.entry.getIn(['data', 'category']);
-
-    // If the category changed, we reset the current subcategory selection
-    if (oldEntry !== newEntry) {
-      console.log("Category changed from:", oldEntry, "to:", newEntry);
-      this.props.onChange('');
-    }
-  },
-
   render: function() {
     const { value, forID, classNameWrapper, entry, onChange } = this.props;
     
-    // Get the current category from the CMS entry
-    const category = entry.getIn(['data', 'category']);
-    
-    // If you see "CURRENT CATEGORY: undefined" in your console, 
-    // it means your field name in config.yml is NOT 'category'.
-    console.log("CURRENT CATEGORY:", category);
+    // This line converts the Immutable object to a regular JS object
+    // so you can see EVERYTHING in the console.
+    const entryData = entry.get('data').toJS();
+    console.log("FULL ENTRY DATA:", entryData);
 
+    // Change 'category' to whatever the console shows as the key name
+    const category = entryData['category']; 
+    
     const options = (category && SUBCATEGORIES[category]) ? SUBCATEGORIES[category] : [];
 
-    // UI: Nothing selected yet
-    if (!category) {
-      return h('div', { 
-        className: classNameWrapper, 
-        style: { border: '1px dashed #ccc', padding: '10px', borderRadius: '4px', color: '#888' } 
-      }, 'Изберете основна категория по-горе...');
-    }
-
-    // UI: Category has no subcategories
-    if (options.length === 0) {
-      return h('div', { 
-        className: classNameWrapper, 
-        style: { border: '1px solid #eee', padding: '10px', borderRadius: '4px', backgroundColor: '#f9f9f9' } 
-      }, `Няма подкатегории за "${category}"`);
-    }
-
-    // UI: The actual Dropdown
-    return h('select', {
-      id: forID,
-      className: classNameWrapper,
-      value: value || '',
-      onChange: (e) => onChange(e.target.value),
-      style: { width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #dfdfe3' }
-    }, [
-      h('option', { value: '', key: 'placeholder' }, '— Изберете подкатегория —'),
-      ...options.map(opt => h('option', { value: opt, key: opt }, opt))
+    return h('div', { className: classNameWrapper }, [
+      h('select', {
+        id: forID,
+        value: value || '',
+        onChange: (e) => onChange(e.target.value),
+        style: { width: '100%', padding: '10px' }
+      }, [
+        h('option', { value: '' }, '— Изберете подкатегория —'),
+        ...options.map(opt => h('option', { value: opt, key: opt }, opt))
+      ]),
+      // This helper text will show you the "active" category in the UI for testing
+      h('p', { style: { fontSize: '12px', color: 'red' } }, `Debug: Текуща категория е "${category}"`)
     ]);
   }
 });
