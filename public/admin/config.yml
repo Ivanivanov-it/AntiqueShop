@@ -20,9 +20,9 @@ collections:
       - { label: "Description", name: "description", widget: "text" }
 
       - { label: "Category", name: "category", widget: "select",
-          options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Сувенири и Подараци","Инструменти и Ножове","Стари Уреди и Апарати","Военни предмети"] }
+          options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Книги",Сувенири и Подараци","Военни предмети"] }
 
-      - { label: "Subcategory", name: "subcategory", widget: "string" }
+      - { label: "Subcategory", name: "subcategory", widget: "dependent-select" }
 
       - { label: "Price", name: "price", widget: "number" }
 

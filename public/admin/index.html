@@ -3,13 +3,14 @@
   <head>
     <meta charset="utf-8" />
   </head>
-
+ 
   <body>
     <div id="nc-root"></div>
-
+ 
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-
+    <script src="/admin/subcategories.js"></script>
+ 
     <script>
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on("init", user => {
@@ -20,6 +21,72 @@
           }
         });
       }
+ 
+      const DependentSelectControl = createClass({
+        getInitialState() {
+          return { options: [] };
+        },
+ 
+        componentDidMount() {
+          this.updateOptions();
+        },
+ 
+        componentDidUpdate(prevProps) {
+          const category = this.props.entry.getIn(['data', 'category']);
+          const prevCategory = prevProps.entry.getIn(['data', 'category']);
+          if (category !== prevCategory) {
+            this.updateOptions();
+            this.props.onChange('');
+          }
+        },
+ 
+        updateOptions() {
+          const category = this.props.entry.getIn(['data', 'category']);
+          const options = SUBCATEGORIES[category] || [];
+          this.setState({ options });
+        },
+ 
+        render() {
+          const { value, onChange, forID, classNameWrapper } = this.props;
+          const { options } = this.state;
+          const category = this.props.entry.getIn(['data', 'category']);
+ 
+          if (!category) {
+            return h('p', { style: { color: '#999' } }, 'Select a category first');
+          }
+ 
+          if (options.length === 0) {
+            return h('p', { style: { color: '#999' } }, 'No subcategories for this category');
+          }
+ 
+          return h('select', {
+            id: forID,
+            className: classNameWrapper,
+            value: value || '',
+            onChange: (e) => onChange(e.target.value),
+            style: { width: '100%', padding: '8px', borderRadius: '4px' }
+          },
+            [
+              h('option', { value: '', key: 'placeholder' }, '— Select subcategory —'),
+              ...options.map(opt =>
+                h('option', { value: opt, key: opt }, opt)
+              )
+            ]
+          );
+        }
+      });
+ 
+      const DependentSelectPreview = createClass({
+        render() {
+          return h('span', {}, this.props.value || '');
+        }
+      });
+ 
+      CMS.registerWidget(
+        'dependent-select',
+        DependentSelectControl,
+        DependentSelectPreview
+      );
     </script>
   </body>
 </html>

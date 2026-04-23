@@ -1,13 +1,20 @@
 import { defineCollection, z } from "astro:content";
 import { glob } from 'astro/loaders';
 
+const categoriesWithSubcategories = [
+  "Антикварни часовници",
+  "Изобразително изкуство",
+  "Колекционерски предмети",
+  "Етника и Фолклор",
+];
+
 const antiques = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/antiques" }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
     category: z.string(),
-    subcategory: z.string(),
+    subcategory: z.string().optional(),
     images: z.array(z.union([
       z.string(),
       z.object({
@@ -20,6 +27,14 @@ const antiques = defineCollection({
     available: z.boolean().default(true).optional(),
     new: z.boolean().default(true).optional(),
     views: z.number().min(0).default(0).optional(),
+  }).superRefine((data, ctx) => {
+    if (categoriesWithSubcategories.includes(data.category) && !data.subcategory) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Subcategory is required for category "${data.category}"`,
+        path: ['subcategory'],
+      });
+    }
   }),
 });
 
