@@ -23,64 +23,58 @@
       }
  
       const DependentSelectControl = createClass({
-  getInitialState() {
-    const category = this.props.entry.getIn(['data', 'category']);
-    return {
-      options: SUBCATEGORIES[category] || [],
-      category: category || '',
-    };
-  },
-
-  componentDidMount() {
-   
-    this._interval = setInterval(() => {
-      const category = this.props.entry.getIn(['data', 'category']);
-      if (category !== this.state.category) {
-        const options = SUBCATEGORIES[category] || [];
-        this.setState({ options, category });
-        this.props.onChange('');
-      }
-    }, 300);
-  },
-
-  componentWillUnmount() {
-    clearInterval(this._interval);
-  },
-
+  // We use componentDidUpdate to clear the subcategory value 
+  // if the user switches to a category that doesn't match.
   componentDidUpdate(prevProps) {
-    const category = this.props.entry.getIn(['data', 'category']);
-    const prevCategory = prevProps.entry.getIn(['data', 'category']);
-    if (category !== prevCategory) {
-      const options = SUBCATEGORIES[category] || [];
-      this.setState({ options, category });
+    const oldCategory = prevProps.entry.getIn(['data', 'category']);
+    const newCategory = this.props.entry.getIn(['data', 'category']);
+
+    if (oldCategory !== newCategory) {
+      // Reset the subcategory value in the CMS data when the parent category changes
       this.props.onChange('');
     }
   },
 
   render() {
-    const { value, onChange, forID, classNameWrapper } = this.props;
-    const { options, category } = this.state;
+    const { value, onChange, forID, classNameWrapper, entry } = this.props;
+    
+    // 1. Grab the current category value directly from the entry
+    const category = entry.getIn(['data', 'category']);
+    
+    // 2. Determine options based on the current category
+    const options = (category && SUBCATEGORIES[category]) ? SUBCATEGORIES[category] : [];
 
+    // 3. UI logic for when no category is selected
     if (!category) {
-      return h('p', { style: { color: '#999' } }, 'Select a category first');
+      return h('div', { className: classNameWrapper }, 
+        h('p', { style: { color: '#798291', fontSize: '14px', fontStyle: 'italic' } }, 'Please select a category above first.')
+      );
     }
 
+    // 4. UI logic for categories with no defined subcategories
     if (options.length === 0) {
-      return h('p', { style: { color: '#999' } }, 'No subcategories for this category');
+      return h('div', { className: classNameWrapper }, 
+        h('p', { style: { color: '#798291', fontSize: '14px' } }, `No subcategories available for "${category}"`)
+      );
     }
 
+    // 5. Render the select dropdown
     return h('select', {
       id: forID,
       className: classNameWrapper,
       value: value || '',
       onChange: (e) => onChange(e.target.value),
-      style: { width: '100%', padding: '8px', borderRadius: '4px' }
+      style: { 
+        width: '100%', 
+        padding: '10px', 
+        borderRadius: '4px', 
+        border: '1px solid #dfdfe3',
+        backgroundColor: '#fff'
+      }
     },
       [
-        h('option', { value: '', key: 'placeholder' }, '— Select subcategory —'),
-        ...options.map(opt =>
-          h('option', { value: opt, key: opt }, opt)
-        )
+        h('option', { value: '', key: 'placeholder' }, '-- Select a Subcategory --'),
+        ...options.map(opt => h('option', { value: opt, key: opt }, opt))
       ]
     );
   }
