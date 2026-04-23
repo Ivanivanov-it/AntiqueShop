@@ -23,60 +23,58 @@
       }
  
       const DependentSelectControl = createClass({
-  // We use componentDidUpdate to clear the subcategory value 
-  // if the user switches to a category that doesn't match.
-  componentDidUpdate(prevProps) {
-    const oldCategory = prevProps.entry.getIn(['data', 'category']);
-    const newCategory = this.props.entry.getIn(['data', 'category']);
+  // This is the magic part. When ANY field in the CMS changes, 
+  // this function runs. We check if the 'category' specifically changed.
+  componentDidUpdate: function(prevProps) {
+    const oldEntry = prevProps.entry.getIn(['data', 'category']);
+    const newEntry = this.props.entry.getIn(['data', 'category']);
 
-    if (oldCategory !== newCategory) {
-      // Reset the subcategory value in the CMS data when the parent category changes
+    // If the category changed, we reset the current subcategory selection
+    if (oldEntry !== newEntry) {
+      console.log("Category changed from:", oldEntry, "to:", newEntry);
       this.props.onChange('');
     }
   },
 
-  render() {
-    const { value, onChange, forID, classNameWrapper, entry } = this.props;
+  render: function() {
+    const { value, forID, classNameWrapper, entry, onChange } = this.props;
     
-    // 1. Grab the current category value directly from the entry
+    // Get the current category from the CMS entry
     const category = entry.getIn(['data', 'category']);
     
-    // 2. Determine options based on the current category
+    // If you see "CURRENT CATEGORY: undefined" in your console, 
+    // it means your field name in config.yml is NOT 'category'.
+    console.log("CURRENT CATEGORY:", category);
+
     const options = (category && SUBCATEGORIES[category]) ? SUBCATEGORIES[category] : [];
 
-    // 3. UI logic for when no category is selected
+    // UI: Nothing selected yet
     if (!category) {
-      return h('div', { className: classNameWrapper }, 
-        h('p', { style: { color: '#798291', fontSize: '14px', fontStyle: 'italic' } }, 'Please select a category above first.')
-      );
+      return h('div', { 
+        className: classNameWrapper, 
+        style: { border: '1px dashed #ccc', padding: '10px', borderRadius: '4px', color: '#888' } 
+      }, 'Изберете основна категория по-горе...');
     }
 
-    // 4. UI logic for categories with no defined subcategories
+    // UI: Category has no subcategories
     if (options.length === 0) {
-      return h('div', { className: classNameWrapper }, 
-        h('p', { style: { color: '#798291', fontSize: '14px' } }, `No subcategories available for "${category}"`)
-      );
+      return h('div', { 
+        className: classNameWrapper, 
+        style: { border: '1px solid #eee', padding: '10px', borderRadius: '4px', backgroundColor: '#f9f9f9' } 
+      }, `Няма подкатегории за "${category}"`);
     }
 
-    // 5. Render the select dropdown
+    // UI: The actual Dropdown
     return h('select', {
       id: forID,
       className: classNameWrapper,
       value: value || '',
       onChange: (e) => onChange(e.target.value),
-      style: { 
-        width: '100%', 
-        padding: '10px', 
-        borderRadius: '4px', 
-        border: '1px solid #dfdfe3',
-        backgroundColor: '#fff'
-      }
-    },
-      [
-        h('option', { value: '', key: 'placeholder' }, '-- Select a Subcategory --'),
-        ...options.map(opt => h('option', { value: opt, key: opt }, opt))
-      ]
-    );
+      style: { width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #dfdfe3' }
+    }, [
+      h('option', { value: '', key: 'placeholder' }, '— Изберете подкатегория —'),
+      ...options.map(opt => h('option', { value: opt, key: opt }, opt))
+    ]);
   }
 });
  

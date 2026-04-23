@@ -15,26 +15,26 @@ collections:
     slug: "{{slug}}"
 
     fields:
-      - { label: "Name", name: "title", widget: "string" }
+      - { label: "Име", name: "title", widget: "string" }
 
-      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Описание", name: "description", widget: "text" }
 
-      - { label: "Category", name: "category", widget: "select",
-          options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Книги",Сувенири и Подараци","Военни предмети"] }
+      - { label: "Категория", name: "category", widget: "select",
+          options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Книги","Сувенири и Подараци","Военни предмети"] }
 
-      - { label: "Subcategory", name: "subcategory", widget: "dependent-select" }
+      - { label: "Подкатегория", name: "subcategory", widget: "dependent-select" }
 
-      - { label: "Price", name: "price", widget: "number" }
+      - { label: "Цена", name: "price", widget: "number" }
 
-      - { label: "Featured", "name": "featured", widget: "boolean"}
+      - { label: "Препоръчан", "name": "featured", widget: "boolean"}
 
-      - { label: "Available", "name": "available", widget: "boolean"}
+      - { label: "Наличен", "name": "available", widget: "boolean"}
 
-      - { label: "New", "name": "new", widget: "boolean"}
+      - { label: "Нов", "name": "new", widget: "boolean"}
       
-      - label: "Images"
+      - label: "Снимки"
         name: "images"
         widget: "list"
         fields:
-          - { label: "Image", name: "url", widget: "image" }
-          - { label: "Caption", name: "caption", widget: "string", required: false }
+          - { label: "Снимка", name: "url", widget: "image" }
+          - { label: "Описание", name: "caption", widget: "string", required: false }
