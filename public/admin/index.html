@@ -26,45 +26,38 @@
   render: function() {
     const { value, forID, classNameWrapper, entry, onChange } = this.props;
 
-    // 1. Get the data. We use .get('data') and then check for 'category'
-    // This is the most reliable way to pull sibling fields in Decap
-    const entryData = entry ? entry.get('data') : null;
-    const category = entryData ? entryData.get('category') : undefined;
+    // 1. Get the raw data
+    const data = entry ? entry.get('data') : null;
+    
+    // 2. DEBUG: Let's see what keys actually exist in your CMS right now
+    if (data) {
+      const keys = data.keySeq().toArray();
+      console.log("FIELDS FOUND IN CMS:", keys);
+      
+      // We will try to find 'category' regardless of case
+      var categoryKey = keys.find(k => k.toLowerCase() === 'category');
+      var category = data.get(categoryKey);
+      console.log("Selected Category Value:", category);
+    }
 
-    // DEBUG: This will help us see if the widget is even firing its render function
-    console.log("Widget Rendered. Category found:", category);
-
-    // 2. Match the subcategories
     const options = (category && SUBCATEGORIES[category]) ? SUBCATEGORIES[category] : [];
 
-    // 3. UI: What to show if category isn't picked yet
+    // UI Logic
     if (!category) {
-      return h('div', { className: classNameWrapper, style: { color: '#798291', padding: '10px', border: '1px solid #dfdfe3', borderRadius: '4px', backgroundColor: '#f8f9fa' } }, 
+      return h('div', { className: classNameWrapper, style: { padding: '10px', color: '#888', border: '1px solid #ccc', borderRadius: '4px' } }, 
         '← Моля, изберете категория горе'
       );
     }
 
-    // 4. UI: The Dropdown
-    return h('div', { className: classNameWrapper }, [
-      h('select', {
-        id: forID,
-        value: value || '',
-        onChange: (e) => onChange(e.target.value),
-        style: { 
-          width: '100%', 
-          padding: '10px', 
-          borderRadius: '4px', 
-          border: '1px solid #dfdfe3',
-          display: 'block'
-        }
-      }, [
-        h('option', { value: '', key: 'placeholder' }, '— Изберете подкатегория —'),
-        ...options.map(opt => h('option', { value: opt, key: opt }, opt))
-      ]),
-      // Small help text to show user the link is active
-      options.length === 0 && h('p', { style: { margin: '5px 0 0', fontSize: '12px', color: '#e07000' } }, 
-        `Забележка: "${category}" няма дефинирани подкатегории.`
-      )
+    return h('select', {
+      id: forID,
+      className: classNameWrapper,
+      value: value || '',
+      onChange: (e) => onChange(e.target.value),
+      style: { width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #dfdfe3' }
+    }, [
+      h('option', { value: '', key: 'placeholder' }, '— Изберете подкатегория —'),
+      ...options.map(opt => h('option', { value: opt, key: opt }, opt))
     ]);
   }
 });
