@@ -81,6 +81,15 @@
         DependentSelectControl,
         DependentSelectPreview
       );
+
+      CMS.registerEventListener({
+  name: 'change',
+  handler: ({ entry }) => {
+    // We don't need to do anything here; just the act of listening 
+    // often forces the CMS to broadcast the state to all widgets.
+    console.log("Global Change Detected");
+  },
+});
     </script>
   </body>
 </html>
