@@ -23,58 +23,50 @@
       }
  
       const DependentSelectControl = createClass({
-        getInitialState() {
-          return { options: [] };
-        },
- 
-        componentDidMount() {
-          this.updateOptions();
-        },
- 
-        componentDidUpdate(prevProps) {
-          const category = this.props.entry.getIn(['data', 'category']);
-          const prevCategory = prevProps.entry.getIn(['data', 'category']);
-          if (category !== prevCategory) {
-            this.updateOptions();
-            this.props.onChange('');
-          }
-        },
- 
-        updateOptions() {
-          const category = this.props.entry.getIn(['data', 'category']);
-          const options = SUBCATEGORIES[category] || [];
-          this.setState({ options });
-        },
- 
-        render() {
-          const { value, onChange, forID, classNameWrapper } = this.props;
-          const { options } = this.state;
-          const category = this.props.entry.getIn(['data', 'category']);
- 
-          if (!category) {
-            return h('p', { style: { color: '#999' } }, 'Select a category first');
-          }
- 
-          if (options.length === 0) {
-            return h('p', { style: { color: '#999' } }, 'No subcategories for this category');
-          }
- 
-          return h('select', {
-            id: forID,
-            className: classNameWrapper,
-            value: value || '',
-            onChange: (e) => onChange(e.target.value),
-            style: { width: '100%', padding: '8px', borderRadius: '4px' }
-          },
-            [
-              h('option', { value: '', key: 'placeholder' }, '— Select subcategory —'),
-              ...options.map(opt =>
-                h('option', { value: opt, key: opt }, opt)
-              )
-            ]
-          );
-        }
-      });
+  getInitialState() {
+    const category = this.props.entry.getIn(['data', 'category']);
+    const options = SUBCATEGORIES[category] || [];
+    return { options, category };
+  },
+
+  componentDidUpdate(prevProps) {
+    const category = this.props.entry.getIn(['data', 'category']);
+    const prevCategory = prevProps.entry.getIn(['data', 'category']);
+    if (category !== prevCategory) {
+      const options = SUBCATEGORIES[category] || [];
+      this.setState({ options, category });
+      this.props.onChange('');
+    }
+  },
+
+  render() {
+    const { value, onChange, forID, classNameWrapper } = this.props;
+    const { options, category } = this.state;
+
+    if (!category) {
+      return h('p', { style: { color: '#999' } }, 'Select a category first');
+    }
+
+    if (options.length === 0) {
+      return h('p', { style: { color: '#999' } }, 'No subcategories for this category');
+    }
+
+    return h('select', {
+      id: forID,
+      className: classNameWrapper,
+      value: value || '',
+      onChange: (e) => onChange(e.target.value),
+      style: { width: '100%', padding: '8px', borderRadius: '4px' }
+    },
+      [
+        h('option', { value: '', key: 'placeholder' }, '— Select subcategory —'),
+        ...options.map(opt =>
+          h('option', { value: opt, key: opt }, opt)
+        )
+      ]
+    );
+  }
+});
  
       const DependentSelectPreview = createClass({
         render() {
