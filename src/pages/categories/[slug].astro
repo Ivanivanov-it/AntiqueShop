@@ -38,10 +38,16 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
           <h2 class="text-lg font-serif font-bold text-stone-800 mb-6 border-b border-stone-100 pb-2">Подкатегории</h2>
           
           {subCategories.length > 0 ? (
-            <ul class="space-y-3">
+            <ul class="space-y-3" id="subcategory-filters">
+              <li>
+                <a href="#" data-subcategory="all" class="subcategory-link text-amber-700 font-bold flex items-center group transition-colors">
+                  <span class="w-2 h-2 bg-amber-700 rounded-full mr-3 transition-colors"></span>
+                  Всички
+                </a>
+              </li>
               {subCategories.map(sub => (
                 <li>
-                  <a href="#" class="text-stone-600 hover:text-amber-700 flex items-center group transition-colors">
+                  <a href="#" data-subcategory={sub.name} class="subcategory-link text-stone-600 hover:text-amber-700 flex items-center group transition-colors">
                     <span class="w-2 h-2 bg-stone-200 rounded-full mr-3 group-hover:bg-amber-700 transition-colors"></span>
                     {sub.name}
                   </a>
@@ -80,7 +86,7 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 
         <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {categoryItems.map(item => (
-            <div class="item-card group cursor-pointer" data-price={item.data.price}>
+            <div class="item-card group cursor-pointer" data-price={item.data.price} data-subcategory={item.data.subcategory}>
               <div class="aspect-[4/5] bg-stone-200 relative overflow-hidden rounded mb-4">
                 {item.data.images && item.data.images.length > 0 ? (
                   <img 
@@ -133,6 +139,8 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 </Layout>
 
 <script>
+  let activeSubcategory = 'all';
+
   function filterAndSort() {
     const minPrice = parseFloat((document.getElementById('min-price') as HTMLInputElement).value) || 0;
     const maxPrice = parseFloat((document.getElementById('max-price') as HTMLInputElement).value) || Infinity;
@@ -146,7 +154,13 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 
     cards.forEach(card => {
       const price = parseFloat(card.dataset.price || '0');
-      const isVisible = price >= minPrice && price <= maxPrice;
+      const subcat = card.dataset.subcategory || '';
+      
+      const priceMatch = price >= minPrice && price <= maxPrice;
+      const subcatMatch = activeSubcategory === 'all' || subcat === activeSubcategory;
+      
+      const isVisible = priceMatch && subcatMatch;
+      
       card.style.display = isVisible ? 'block' : 'none';
       if (isVisible) visibleCount++;
     });
@@ -160,12 +174,10 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 
       if (sortBy === 'price-asc') return priceA - priceB;
       if (sortBy === 'price-desc') return priceB - priceA;
-      // If no date, use title as a fallback for stability
       return titleA.localeCompare(titleB);
     });
 
     if (sortBy !== 'newest' || visibleCount < cards.length) {
-      // Re-append in sorted order if needed
       sortedCards.forEach(card => itemsGrid?.appendChild(card));
     }
 
@@ -179,7 +191,6 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 
     if (resultsCount) resultsCount.textContent = visibleCount.toString();
     
-    // Hide pagination if filtering is active
     const pagination = document.getElementById('pagination');
     if (pagination) {
       if (visibleCount < cards.length) {
@@ -189,6 +200,30 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
       }
     }
   }
+
+  // Subcategory link handling
+  document.querySelectorAll('.subcategory-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = e.currentTarget as HTMLElement;
+      activeSubcategory = target.dataset.subcategory || 'all';
+
+      // Update UI classes
+      document.querySelectorAll('.subcategory-link').forEach(l => {
+        l.classList.remove('text-amber-700', 'font-bold');
+        l.classList.add('text-stone-600');
+        l.querySelector('span')?.classList.remove('bg-amber-700');
+        l.querySelector('span')?.classList.add('bg-stone-200');
+      });
+
+      target.classList.add('text-amber-700', 'font-bold');
+      target.classList.remove('text-stone-600');
+      target.querySelector('span')?.classList.add('bg-amber-700');
+      target.querySelector('span')?.classList.remove('bg-stone-200');
+
+      filterAndSort();
+    });
+  });
 
   document.getElementById('min-price')?.addEventListener('input', filterAndSort);
   document.getElementById('max-price')?.addEventListener('input', filterAndSort);
