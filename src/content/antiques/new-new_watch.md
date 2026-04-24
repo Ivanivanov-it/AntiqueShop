@@ -1,10 +1,10 @@
 ---
 title: new watch 1
 description: A rare ceramic vase from 19th century.
-category: Старинни бижута
+category: Изобразително изкуство
 subcategory: Джобни часновници
 price: 255
-featured: false
+featured: true
 available: true
 new: false
 views: 0

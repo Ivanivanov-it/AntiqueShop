@@ -1,6 +1,10 @@
+
+
 backend:
   name: git-gateway
   branch: main
+ 
+local_backend: true
 
 publish_mode: editorial_workflow
 
@@ -19,22 +23,26 @@ collections:
 
       - { label: "Описание", name: "description", widget: "text" }
 
-      - { label: "Категория", name: "category", widget: "select",
+      - { label: "Категория", name: "category", id: "category", widget: "select",
           options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Книги","Сувенири и Подараци","Военни предмети"] }
 
-      - { label: "Подкатегория", name: "subcategory", widget: "dependent-select" }
+      - { label: "Подкатегория", name: "subcategory", widget: "dependent-select", required: false }
 
       - { label: "Цена", name: "price", widget: "number" }
 
-      - { label: "Препоръчан", "name": "featured", widget: "boolean"}
+      - { label: "Препоръчан", "name": "featured", widget: "boolean", default: false, required: false }
 
-      - { label: "Наличен", "name": "available", widget: "boolean"}
+      - { label: "Наличен", "name": "available", widget: "boolean", default: true, required: false }
 
-      - { label: "Нов", "name": "new", widget: "boolean"}
+      - { label: "Нов", "name": "new",  widget: "boolean", default: true, required: false }
       
       - label: "Снимки"
         name: "images"
         widget: "list"
+        min: 1
+        required: true 
+        add_to_top: true
+        summary: "{{fields.url}}" 
         fields:
-          - { label: "Снимка", name: "url", widget: "image" }
+          - { label: "Снимка", name: "url", widget: "image", required: true }
           - { label: "Описание", name: "caption", widget: "string", required: false }

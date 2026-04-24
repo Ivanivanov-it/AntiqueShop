@@ -14,14 +14,14 @@ const antiques = defineCollection({
     title: z.string(),
     description: z.string(),
     category: z.string(),
-    subcategory: z.string().optional(),
+    subcategory: z.string().optional().or(z.literal("")),
     images: z.array(z.union([
-      z.string(),
-      z.object({
-        url: z.string(),
-        caption: z.string().optional(),
-      })
-    ])),
+    z.string(),
+    z.object({
+      url: z.string(),
+      caption: z.string().optional(),
+    })
+  ])).nonempty("At least one image is required"),
     price: z.number().min(0),
     featured: z.boolean().default(false).optional(),
     available: z.boolean().default(true).optional(),

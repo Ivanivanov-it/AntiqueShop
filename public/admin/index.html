@@ -1,93 +1,147 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8" />
   </head>
- 
+
   <body>
     <div id="nc-root"></div>
- 
+
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
     <script src="/admin/subcategories.js"></script>
- 
+
     <script>
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("init", user => {
-          if (!user) {
-            window.netlifyIdentity.on("login", () => {
-              document.location.href = "/admin/";
-            });
-          }
-        });
-      }
- 
-     const DependentSelectControl = createClass({
-  render: function() {
-    const { value, forID, classNameWrapper, onChange } = this.props;
+       // if (window.netlifyIdentity) {
+      //   window.netlifyIdentity.on("init", user => {
+      //     if (!user) {
+      //       window.netlifyIdentity.on("login", () => {
+      //         document.location.href = "/admin/";
+      //       });
+      //     }
+      //   });
+      // }
 
-    // 1. TRY MULTIPLE WAYS TO FIND THE DATA
-    // Way A: The standard Decap path
-    let category = this.props.entry.getIn(['data', 'category']);
+const DependentSelectControl = createClass({
+  getInitialState() {
+    // Try to get category from props immediately for Edit mode
+    const initialCat = this.props.entry ? this.props.entry.getIn(['data', 'category']) : '';
+    return { category: initialCat };
+  },
+
+  isValid() {
+    const { value, entry } = this.props;
     
-    // Way B: The "dirty" state path (often used in v3.x)
-    if (!category) {
-      const allValues = this.props.entry.get('data').toJS();
-      category = allValues['category'];
+    // 1. Determine the current category by any means necessary
+    // Check state, then props, then the DOM scraper
+    let currentCat = this.state.category;
+    if (!currentCat && entry) {
+      currentCat = entry.getIn(['data', 'category']);
+    }
+    if (!currentCat) {
+      const valueDisplay = document.querySelector('.css-hlgwow');
+      currentCat = valueDisplay ? valueDisplay.innerText.trim() : '';
     }
 
-    // DEBUG: This will tell us if Way B worked
-    console.log("Searching for category... Found:", category);
+    // 2. Check if this category requires a subcategory
+    const options = (window.SUBCATEGORIES && currentCat) ? window.SUBCATEGORIES[currentCat] : [];
+    const needsSubcategory = options && options.length > 0;
 
-    // 2. Match the subcategories
-    const options = (category && SUBCATEGORIES[category]) ? SUBCATEGORIES[category] : [];
-
-    // 3. UI logic
-    if (!category) {
-      return h('div', { 
-        className: classNameWrapper, 
-        style: { padding: '10px', color: '#798291', border: '1px solid #dfdfe3', borderRadius: '4px', backgroundColor: '#fcfcfc' } 
-      }, '← Моля, изберете категория горе...');
+    // 3. Validation Logic
+    if (needsSubcategory && (!value || value.trim() === "")) {
+      return {
+        error: {
+          message: `Задължително: Изберете подкатегория за "${currentCat}" преди запис.`
+        }
+      };
     }
 
-    // 4. The Select Dropdown
-    return h('select', {
-      id: forID,
-      className: classNameWrapper,
-      value: value || '',
-      onChange: (e) => onChange(e.target.value),
-      style: { 
-        width: '100%', 
-        padding: '10px', 
-        borderRadius: '4px', 
-        border: '1px solid #dfdfe3',
-        backgroundColor: '#fff'
+    return true;
+  },
+
+  componentDidMount() {
+    // Flag to prevent wiping data on the initial load of the Edit page
+    this.isInitialLoad = true;
+
+    this.scraper = setInterval(() => {
+      const valueDisplay = document.querySelector('.css-hlgwow');
+      
+      if (valueDisplay) {
+        const detectedValue = valueDisplay.innerText.trim();
+        
+        // If the category changed from what we have in state
+        if (detectedValue && detectedValue !== this.state.category) {
+          
+          // 1. If it's NOT the first time we're seeing this (meaning the user actually clicked)
+          // OR if we are switching from one category to another
+          if (!this.isInitialLoad && this.state.category !== '') {
+             console.log("Category change detected! Resetting subcategory...");
+             this.props.onChange(''); // This clears the old subcategory in Decap's data
+          }
+
+          // 2. Update the local state so the dropdown options change
+          this.setState({ category: detectedValue });
+          
+          // After the first valid detection, we are no longer in "Initial Load"
+          this.isInitialLoad = false;
+        }
       }
-    }, [
-      h('option', { value: '', key: 'placeholder' }, '— Изберете подкатегория —'),
-      ...options.map(opt => h('option', { value: opt, key: opt }, opt))
+    }, 300);
+  },
+
+  componentWillUnmount() {
+    if (this.scraper) clearInterval(this.scraper);
+  },
+
+  render() {
+    const { value, forID, classNameWrapper, onChange } = this.props;
+    const category = this.state.category;
+    const options = (window.SUBCATEGORIES && category) ? window.SUBCATEGORIES[category] : [];
+    const hasSubcategories = options && options.length > 0;
+
+    return h('div', { className: classNameWrapper }, [
+      h('select', {
+        id: forID,
+        value: value || '',
+        onChange: (e) => onChange(e.target.value),
+        disabled: !hasSubcategories,
+        style: { 
+          width: '100%', 
+          padding: '10px', 
+          borderRadius: '4px', 
+          border: `1px solid ${hasSubcategories && !value ? '#e74c3c' : '#dfdfe3'}`,
+          backgroundColor: hasSubcategories ? '#fff' : '#f0f0f0'
+        }
+      }, [
+        h('option', { value: '' }, hasSubcategories ? `— Изберете подкатегория —` : '— Не се изисква подкатегория —'),
+        ...options.map(opt => h('option', { value: opt, key: opt }, opt))
+      ])
     ]);
   }
 });
- 
-      const DependentSelectPreview = createClass({
-        render() {
-          return h('span', {}, this.props.value || '');
-        }
-      });
- 
-      CMS.registerWidget(
-        'dependent-select',
-        DependentSelectControl,
-        DependentSelectPreview
-      );
 
-      CMS.registerEventListener({
-  name: 'change',
+const DependentSelectPreview = createClass({
+  render: function() {
+    return h('span', {}, this.props.value || '');
+  }
+});
+
+// Register the widget
+CMS.registerWidget('dependent-select', DependentSelectControl, DependentSelectPreview);
+
+
+
+CMS.registerEventListener({
+  name: 'preSave',
   handler: ({ entry }) => {
-    // We don't need to do anything here; just the act of listening 
-    // often forces the CMS to broadcast the state to all widgets.
-    console.log("Global Change Detected");
+    const images = entry.getIn(['data', 'images']);
+
+    // Check if images exists, is a list, and has at least one item with a URL
+    if (!images || images.size === 0 || !images.getIn([0, 'url'])) {
+      // This sends an alert to the user and stops the save process
+      alert("Грешка: Трябва да добавите поне една снимка!");
+      throw new Error("At least one image is required.");
+    }
   },
 });
     </script>
