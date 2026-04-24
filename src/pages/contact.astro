@@ -14,30 +14,35 @@ import Layout from '../layouts/Layout.astro';
     <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-16">
       <div class="lg:col-span-2">
         <h2 class="text-2xl font-serif font-bold text-stone-800 mb-8">Свържете се с нас</h2>
-        <form class="space-y-6">
+        <form action="https://formsubmit.co/antiqueshop.berlin@gmail.com" method="POST" class="space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-stone-700 mb-2">Пълно име</label>
-              <input type="text" placeholder="Иван Иванов" class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500" />
+              <input name="name" type="text" placeholder="Иван Иванов" required class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500" />
             </div>
             <div>
               <label class="block text-sm font-medium text-stone-700 mb-2">Email адрес</label>
-              <input type="email" placeholder="ivan@example.com" class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500" />
+              <input name="email" type="email" placeholder="ivan@example.com" required class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500" />
             </div>
           </div>
           <div>
             <label class="block text-sm font-medium text-stone-700 mb-2">Тема</label>
-            <select class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500">
-              <option>Общо запитване</option>
-              <option>Продайте вашия антиквариат</option>
-              <option>Заявка за удостоверение</option>
-              <option>Помощ при набавяне</option>
+            <select name="subject" class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500">
+              <option value="General Inquiry">Общо запитване</option>
+              <option value="Sell your antique">Продайте вашия антиквариат</option>
+              <option value="Certificate Request">Заявка за удостоверение</option>
+              <option value="Sourcing Help">Помощ при набавяне</option>
             </select>
           </div>
           <div>
             <label class="block text-sm font-medium text-stone-700 mb-2">Вашето съобщение</label>
-            <textarea rows="6" placeholder="Как можем да ви помогнем?" class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"></textarea>
+            <textarea name="message" rows="6" placeholder="Как можем да ви помогнем?" required class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"></textarea>
           </div>
+          <!-- FormSubmit Configuration -->
+          <input type="hidden" name="_subject" value="New message from Antique Shop Website!">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" id="next-page" value="">
           <button type="submit" class="bg-amber-700 text-white px-8 py-4 rounded font-bold hover:bg-amber-800 transition-colors shadow-lg">
             Изпрати съобщение
           </button>
@@ -80,3 +85,11 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </div>
 </Layout>
+
+<script>
+  // Dynamically set the thank-you page URL for the form redirect
+  const nextInput = document.getElementById('next-page') as HTMLInputElement;
+  if (nextInput) {
+    nextInput.value = window.location.origin + '/thank-you';
+  }
+</script>
