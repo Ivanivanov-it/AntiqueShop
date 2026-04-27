@@ -20,7 +20,7 @@ const { Content } = await render(item);
 const views = data.views || Math.floor(Math.random() * 500) + 100;
 
 // Supporting 1 or more images from the new 'images' field
-const images = (data.images || []).map(img => typeof img === 'string' ? img : img.url);
+const images = (data.images || []).map(img => typeof img === 'string' ? img : img.url).reverse();
 const imageSets = images.map(img => {
   // Transform /uploads/ to /optimized/ so getImageSet produces correct paths
   const optimizedBase = img.replace('/uploads/', '/optimized/');

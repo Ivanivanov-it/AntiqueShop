@@ -10,7 +10,7 @@ export const categories = [
       { slug: 'nastolni-chasovnici', name: 'Настолни часовници' },
       { slug: 'drugi', name: 'Други' }
     ],
-    image: '/images/categories/antique-watches.webp'
+    image: '/images/categories/category-watches.webp'
   },
   { 
     slug: 'porcelan', 

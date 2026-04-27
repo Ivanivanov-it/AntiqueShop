@@ -87,7 +87,8 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
 
         <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {categoryItems.map(item => {
-            const firstImageUrl = typeof item.data.images[0] === 'string' ? item.data.images[0] : item.data.images[0].url;
+            const firstAddedImage = item.data.images[item.data.images.length - 1];
+            const firstImageUrl = typeof firstAddedImage === 'string' ? firstAddedImage : firstAddedImage.url;
             // Transform /uploads/ to /optimized/ so getImageSet produces correct paths
             const optimizedBase = firstImageUrl.replace('/uploads/', '/optimized/');
             const imgSet = getImageSet(optimizedBase);

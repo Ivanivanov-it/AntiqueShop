@@ -77,7 +77,7 @@ const newestItems = allAntiques
             <div class="aspect-[3/4] bg-stone-800 mb-4 overflow-hidden rounded shadow-sm relative border border-white/5">
               {item.data.images && item.data.images.length > 0 ? (
                 <img 
-                  src={typeof item.data.images[0] === 'string' ? item.data.images[0] : item.data.images[0].url} 
+                  src={typeof item.data.images[item.data.images.length - 1] === 'string' ? item.data.images[item.data.images.length - 1] : item.data.images[item.data.images.length - 1].url} 
                   alt={item.data.title} 
                   class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                 />
