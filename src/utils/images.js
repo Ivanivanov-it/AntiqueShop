@@ -1,9 +1,10 @@
 export function getImageSet(url) {
-  const base = url.replace(/\.[^/.]+$/, "");
+  const clean = url.split("/").pop(); 
+  const base = clean.replace(/\.[^/.]+$/, "");
 
   return {
-    small: `${base}-400.webp`,
-    medium: `${base}-800.webp`,
-    large: `${base}-1200.webp`,
+    small: `/images/optimized/${base}-400.webp`,
+    medium: `/images/optimized/${base}-800.webp`,
+    large: `/images/optimized/${base}-1200.webp`,
   };
 }

@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
 import { categories, getSlug } from '../../utils/categories.js';
+import { getImageSet } from '../../utils/images.js';
 
 export async function getStaticPaths() {
   const allAntiques = await getCollection('antiques');
@@ -20,6 +21,11 @@ const views = data.views || Math.floor(Math.random() * 500) + 100;
 
 // Supporting 1 or more images from the new 'images' field
 const images = (data.images || []).map(img => typeof img === 'string' ? img : img.url);
+const imageSets = images.map(img => {
+  // Transform /uploads/ to /optimized/ so getImageSet produces correct paths
+  const optimizedBase = img.replace('/uploads/', '/optimized/');
+  return getImageSet(optimizedBase);
+});
 
 // Find category slug for breadcrumbs
 const category = categories.find(c => c.name === data.category);
@@ -42,23 +48,25 @@ const categorySlug = category ? getSlug(category) : 'all';
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
       <!-- Left: Images -->
       <div class="space-y-6">
-        <div class="aspect-square bg-white border border-stone-200 rounded-lg overflow-hidden shadow-sm flex items-center justify-center">
+        <div class="aspect-square bg-white border border-stone-200 rounded-lg overflow-hidden shadow-sm flex items-center justify-center relative">
           <img 
-            src={images[0]} 
+            src={imageSets[0].medium} 
+            srcset={`${imageSets[0].small} 400w, ${imageSets[0].medium} 800w, ${imageSets[0].large} 1200w`}
+            sizes="(max-width: 768px) 100vw, 50vw"
             alt={data.title} 
             class="max-w-full max-h-full object-contain p-4 transition-all duration-500" 
             id="main-image" 
           />
         </div>
         
-        {images.length > 1 && (
+        {imageSets.length > 1 && (
           <div class="grid grid-cols-4 gap-4">
-            {images.map((img, index) => (
+            {imageSets.map((imgSet, index) => (
               <button 
                 class="aspect-square bg-white border border-stone-200 rounded cursor-pointer overflow-hidden hover:border-amber-700 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500"
-                onclick={`document.getElementById('main-image').src='${img}'`}
+                onclick={`const main = document.getElementById('main-image'); main.src='${imgSet.medium}'; main.srcset='${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w';`}
               >
-                <img src={img} alt={`${data.title} - ${index + 1}`} class="w-full h-full object-cover p-1" />
+                <img src={imgSet.small} alt={`${data.title} - ${index + 1}`} class="w-full h-full object-cover p-1" />
               </button>
             ))}
           </div>
