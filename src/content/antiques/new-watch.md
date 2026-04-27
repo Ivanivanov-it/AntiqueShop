@@ -7,6 +7,7 @@ price: 255
 featured: true
 available: false
 new: true
+date: 2024-07-25
 views: 25
 images:
   - url: "/images/uploads/watch1.webp"

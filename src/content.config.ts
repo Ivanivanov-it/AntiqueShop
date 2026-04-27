@@ -26,6 +26,7 @@ const antiques = defineCollection({
     featured: z.boolean().default(false).optional(),
     available: z.boolean().default(true).optional(),
     new: z.boolean().default(true).optional(),
+    date: z.coerce.date().optional(),
     views: z.number().min(0).default(0).optional(),
   }).superRefine((data, ctx) => {
     if (categoriesWithSubcategories.includes(data.category) && !data.subcategory) {
