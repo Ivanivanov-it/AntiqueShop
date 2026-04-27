@@ -9,19 +9,22 @@ export const categories = [
       { slug: 'rachni-chasovnici', name: 'Ръчни часовници' },
       { slug: 'nastolni-chasovnici', name: 'Настолни часовници' },
       { slug: 'drugi', name: 'Други' }
-    ]
+    ],
+    image: '/images/categories/antique-watches.webp'
   },
   { 
     slug: 'porcelan', 
     name: 'Порцелан', 
     description: 'Стари изделия от порцелан и керамика.',
-    subcategories: []
+    subcategories: [],
+    image: '/images/categories/porcelan-category.webp'
   },
   { 
     slug: 'starinni-bizhuta', 
     name: 'Старинни бижута', 
     description: 'Етнографски накити и страринни бижута.',
-    subcategories: []
+    subcategories: [],
+    image: '/images/categories/old-jewelry.webp'
   },
   { 
     slug: 'izobrazitelno-izkustvo', 
@@ -31,7 +34,8 @@ export const categories = [
       { slug: 'jivopis', name: 'Живопис' },
       { slug: 'grafika', name: 'Графика' },
       { slug: 'skulptura', name: 'Скулптура' }
-    ]
+    ],
+    image: '/images/categories/antique-art.webp'
   },
   { 
     slug: 'kolektsionerski-predmeti', 
@@ -43,7 +47,8 @@ export const categories = [
       { slug: 'filatelia', name: 'Филателия' },
       { slug: 'znachki', name: 'Значки' },
       { slug: 'drugi', name: 'Други' }
-    ]
+    ],
+    image: '/images/categories/collection-items.webp'
   },
   { 
     slug: 'etnika-i-folklor', 
@@ -53,24 +58,28 @@ export const categories = [
       { slug: 'obleklo', name: 'Облекло' },
       { slug: 'nakiti', name: 'Накити' },
       { slug: 'drugi', name: 'Други' }
-    ]
+    ],
+    image: '/images/categories/ethnics-folklore.webp'
   },
   { 
     slug: 'suveniri-i-podaratsi', 
     name: 'Сувенири и Подараци', 
     description: 'Сувенири и подаръци с антикварна стойност.',
-    subcategories: []
+    subcategories: [],
+    image: '/images/categories/antique-gifts.webp'
   },
   { 
     slug: 'knigi', 
     name: 'Книги', 
     description: 'Книги',
-    subcategories: [] },
+    subcategories: [],
+    image: '/images/categories/antique-books.webp' },
   { 
     slug: 'voenni-predmeti', 
     name: 'Военни предмети', 
     description: 'Антикварни военни предмети и артефакти.',
-    subcategories: []
+    subcategories: [],
+    image: '/images/categories/antique-military-goods.webp'
   }
 ];
 

@@ -6,8 +6,8 @@ import { categories, getSlug } from '../utils/categories.js';
 <Layout>
   <div class="py-16 bg-stone-100 border-b border-stone-200">
     <div class="container mx-auto px-4">
-      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">Изследвайте нашата колекция</h1>
-      <p class="text-stone-600">Разгледайте нашите внимателно подбрани категории от редки и красиви антики.</p>
+      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">Влезте в света на колекцията</h1>
+      <p class="text-stone-600">Подбрани категории от автентични антики, носещи следи от различни епохи и култури.</p>
     </div>
   </div>
 
@@ -16,8 +16,19 @@ import { categories, getSlug } from '../utils/categories.js';
       {categories.map((category) => (
         <a href={`/categories/${getSlug(category)}`} class="group">
           <div class="bg-white border border-stone-200 rounded overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1 h-full flex flex-col">
-            <div class="aspect-video bg-stone-300 flex items-center justify-center text-stone-500 italic">
-              [Image: {category.name}]
+            <div class="aspect-video relative overflow-hidden bg-stone-200">
+              {category.image ? (
+                <img 
+                  src={category.image} 
+                  alt={`Антикварни предмети и артефакти от категория ${category.name}`}
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              ) : (
+                <div class="absolute inset-0 flex items-center justify-center text-stone-500 italic">
+                  {category.name}
+                </div>
+              )}
+              <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-all duration-300"></div>
             </div>
             <div class="p-8 flex flex-col flex-grow">
               <div class="flex justify-between items-start mb-4">
@@ -42,10 +53,10 @@ import { categories, getSlug } from '../utils/categories.js';
     <div class="container mx-auto px-4 text-center">
       <h2 class="text-3xl font-serif font-bold text-stone-800 mb-4">Търсите нещо конкретно?</h2>
       <p class="text-stone-600 mb-8 max-w-xl mx-auto">
-        Ако търсите конкретен артикул, нашият екип от експерти може да ви помогне да го намерите чрез нашата глобална мрежа.
+        Ако търсите определен антикварен предмет, можем да ви съдействаме с насоки и препоръки за неговото откриване.
       </p>
       <a href="/contact" class="inline-block bg-stone-800 text-white px-8 py-3 rounded hover:bg-stone-700 transition-colors">
-        Запитване за снабдяване
+         Свържете се с нас
       </a>
     </div>
   </div>
