@@ -81,7 +81,7 @@ const newestItems = allAntiques
 
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {newestItems.map((item) => (
-          <article class="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:border-[#c5a059]/50 hover:bg-white/[0.07]">
+          <article class="group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:border-[#c5a059]/70 hover:bg-white">
             <a href={`/antiques/${item.id}`} class="block">
               <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
                 {item.data.images && item.data.images.length > 0 ? (
@@ -105,15 +105,15 @@ const newestItems = allAntiques
                 </div>
               </div>
               <div class="p-5">
-                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
                   {item.data.subcategory}
                 </p>
-                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-white transition-colors group-hover:text-[#c5a059]">
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950 transition-colors group-hover:text-[#8a6a24]">
                   {item.data.title}
                 </h3>
-                <div class="mt-5 flex items-center justify-between border-t border-white/10 pt-4">
-                  <span class="text-sm text-stone-400">Цена</span>
-                  <span class="font-serif text-lg font-bold text-[#c5a059]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">Цена</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
                 </div>
               </div>
             </a>

@@ -46,6 +46,7 @@ export const categories = [
       { slug: 'medali-i-ordeni', name: 'Медали и ордени' },
       { slug: 'filatelia', name: 'Филателия' },
       { slug: 'znachki', name: 'Значки' },
+      { slug: 'detski-igrachki', name: 'Детски играчки' },
       { slug: 'drugi', name: 'Други' }
     ],
     image: '/images/categories/collection-items.webp'

@@ -19,9 +19,9 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 	</head>
 	<body class={`${bodyClass} text-stone-900 flex flex-col min-h-screen`}>
 		<header class="bg-white shadow-sm sticky top-0 z-50">
-			<nav class="container mx-auto px-4 py-6 flex justify-between items-center">
-				<a href="/"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-24" /></a>
-				<ul class="flex space-x-8 font-medium">
+			<nav class="container mx-auto flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:py-5">
+				<a href="/" class="flex justify-center sm:justify-start"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-16 w-auto sm:h-20 lg:h-24" /></a>
+				<ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold uppercase tracking-wide text-stone-800 sm:justify-end sm:text-base sm:normal-case sm:tracking-normal">
 					<!-- <li><a href="/" class="hover:text-amber-700 transition-colors">Home</a></li> -->
 					<li><a href="/categories" class="hover:text-amber-700 transition-colors">Категории</a></li>
 					<li><a href="/about" class="hover:text-amber-700 transition-colors">За нас</a></li>
@@ -34,29 +34,32 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 			<slot />
 		</main>
 
-		<footer class="bg-stone-900 text-stone-300 py-16 mt-20">
+		<footer class="mt-20 bg-stone-950 text-stone-300">
 			<div class="container mx-auto px-4">
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-					<div class="flex flex-col items-center md:items-start">
-						<a href="/" class="inline-block mb-6">
-							<img src="/images/AntiqueShopLogo.png" alt="Antique Shop Logo" class="h-24 brightness-0 invert" />
+				<div class="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1.1fr] lg:gap-12 lg:py-16">
+					<div class="text-center sm:text-left">
+						<a href="/" class="mb-5 inline-flex justify-center sm:justify-start">
+							<img src="/images/AntiqueShopLogo.png" alt="Antique Shop Logo" class="h-20 w-auto brightness-0 invert sm:h-24" />
 						</a>
+						<p class="mx-auto max-w-xs text-sm leading-relaxed text-stone-400 sm:mx-0">
+							Подбрани антики, редки предмети и обекти с характер за дома и колекцията.
+						</p>
 					</div>
-					<div class="text-center md:text-left">
-						<h3 class="text-lg font-bold text-white mb-6 uppercase tracking-wider">Категории</h3>
-						<ul class="space-y-3 text-sm">
+					<div class="text-center sm:text-left">
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Категории</h3>
+						<ul class="grid grid-cols-1 gap-3 text-sm sm:gap-2">
 							{categories.slice(0, 10).map(category => (
 								<li><a href={`/categories/${getSlug(category)}`} class="hover:text-amber-500 transition-colors">{category.name}</a></li>
 							))}
 						</ul>
 					</div>
-					<div class="text-center md:text-left">
-						<h3 class="text-lg font-bold text-white mb-6 uppercase tracking-wider">Бързи връзки</h3>
-						<ul class="space-y-3 text-sm mb-8">
+					<div class="text-center sm:text-left">
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Бързи връзки</h3>
+						<ul class="mb-8 space-y-3 text-sm">
 							<li><a href="/about" class="hover:text-amber-500 transition-colors">За нас</a></li>
 							<li><a href="/contact" class="hover:text-amber-500 transition-colors">Свържете се с нас</a></li>
 						</ul>
-						<h3 class="text-lg font-bold text-white mb-4 uppercase tracking-wider">Последвайте ни</h3>
+						<h3 class="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-white">Последвайте ни</h3>
 						<a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 hover:text-amber-500 transition-colors group">
 							<div class="w-10 h-10 bg-stone-800 rounded-full flex items-center justify-center group-hover:bg-amber-700 transition-colors">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -68,21 +71,22 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 							<span class="text-sm font-medium">Instagram</span>
 						</a>
 					</div>
-					<div class="text-center md:text-left">
-						<h3 class="text-lg font-bold text-white mb-6 uppercase tracking-wider">Абонамент</h3>
-						<p class="text-sm mb-6 leading-relaxed">Абонирайте се, за да получавате актуализации за нашите най-нови продукти.</p>
-						<form class="flex shadow-lg">
-							<input type="email" placeholder="Вашият имейл" class="bg-stone-800 border-none text-white px-4 py-3 rounded-l focus:outline-none focus:ring-1 focus:ring-amber-500 w-full text-sm" />
-							<button type="submit" class="bg-amber-700 hover:bg-amber-600 text-white px-6 py-3 rounded-r transition-colors text-sm font-bold flex items-center justify-center">
-								<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-									<path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-								</svg>
-							</button>
-						</form>
+					<div class="text-center sm:text-left">
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Контакти</h3>
+						<div class="space-y-4 text-sm leading-relaxed text-stone-400">
+							<p>
+								<span class="block font-semibold text-stone-200">Антикварен магазин Берлин</span>
+								Селекция, оценка и консултация за ценни предмети.
+							</p>
+							<a href="/contact" class="inline-flex rounded border border-amber-600/60 px-5 py-3 text-xs font-bold uppercase tracking-wide text-amber-400 transition-colors hover:bg-amber-600 hover:text-stone-950">
+								Свържете се с нас
+							</a>
+						</div>
 					</div>
 				</div>
-				<div class="border-t border-stone-800 mt-12 pt-8 text-center text-xs">
+				<div class="border-t border-stone-800 py-6 text-center text-xs text-stone-500 sm:flex sm:items-center sm:justify-between sm:text-left">
 					&copy; {new Date().getFullYear()} AntiqueShop. All rights reserved.
+					<span class="mt-2 block sm:mt-0">Антики с история и характер.</span>
 				</div>
 			</div>
 		</footer>
