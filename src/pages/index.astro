@@ -1,9 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
 const allAntiques = await getCollection('antiques');
-const sortByRecentDate = (a, b) => {
+type AntiqueImage = CollectionEntry<'antiques'>['data']['images'][number];
+
+const getImageUrl = (image: AntiqueImage) => typeof image === 'string' ? image : image.url;
+
+const sortByRecentDate = (a: CollectionEntry<'antiques'>, b: CollectionEntry<'antiques'>) => {
   const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
   const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
   if (dateA !== dateB) return dateB - dateA;
@@ -93,7 +98,7 @@ const newestItems = allAntiques
               <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
                 {item.data.images && item.data.images.length > 0 ? (
                   <img
-                    src={typeof item.data.images[item.data.images.length - 1] === 'string' ? item.data.images[item.data.images.length - 1] : item.data.images[item.data.images.length - 1].url}
+                    src={getImageUrl(item.data.images[item.data.images.length - 1])}
                     alt={item.data.title}
                     class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
@@ -189,7 +194,7 @@ const newestItems = allAntiques
               <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
                 {item.data.images && item.data.images.length > 0 ? (
                   <img
-                    src={typeof item.data.images[item.data.images.length - 1] === 'string' ? item.data.images[item.data.images.length - 1] : item.data.images[item.data.images.length - 1].url}
+                    src={getImageUrl(item.data.images[item.data.images.length - 1])}
                     alt={item.data.title}
                     class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"

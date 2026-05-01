@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { categories, getSlug } from '../../utils/categories.js';
 import { getImageSet } from '../../utils/images.js';
 import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
 export function getStaticPaths() {
   return categories.map(category => ({
@@ -15,58 +16,72 @@ const { category } = Astro.props;
 const subCategories = category.subcategories || [];
 
 const allAntiques = await getCollection('antiques');
-const categoryItems = allAntiques.filter(item => item.data.category === category.name);
+const sortByRecentDate = (a: CollectionEntry<'antiques'>, b: CollectionEntry<'antiques'>) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  if (dateA !== dateB) return dateB - dateA;
+  return b.id.localeCompare(a.id);
+};
+
+const categoryItems = allAntiques
+  .filter(item => item.data.category === category.name)
+  .sort(sortByRecentDate);
 ---
 
-<Layout>
-  <div class="py-12 bg-stone-100 border-b border-stone-200">
+<Layout bodyClass="bg-stone-50">
+  <div class="border-b border-stone-200 bg-stone-100 py-10 sm:py-12">
     <div class="container mx-auto px-4">
-      <div class="text-sm text-stone-500 mb-4">
-        <a href="/" class="hover:text-amber-700">Начало</a> / 
-        <a href="/categories" class="hover:text-amber-700">Категории</a> / 
-        <span class="text-stone-800">{category.name}</span>
+      <div class="mb-5 flex flex-wrap items-center gap-2 text-sm text-stone-500">
+        <a href="/" class="transition-colors hover:text-amber-700">Начало</a>
+        <span>/</span>
+        <a href="/categories" class="transition-colors hover:text-amber-700">Категории</a>
+        <span>/</span>
+        <span class="font-medium text-stone-800">{category.name}</span>
       </div>
-      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">{category.name}</h1>
-      <p class="text-stone-600 max-w-2xl">{category.description}</p>
+      <div class="max-w-3xl">
+        <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">Колекция</span>
+        <h1 class="font-serif text-4xl font-bold leading-tight text-stone-950 sm:text-5xl">{category.name}</h1>
+        <p class="mt-4 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">{category.description}</p>
+      </div>
     </div>
   </div>
 
-  <div class="container mx-auto px-4 py-12">
-    <div class="flex flex-col lg:flex-row gap-12">
+  <div class="container mx-auto px-4 py-10 sm:py-12 lg:py-16">
+    <div class="flex flex-col gap-8 lg:flex-row lg:gap-12">
       <!-- Sidebar / Sub-categories -->
-      <aside class="w-full lg:w-64 flex-shrink-0">
-        <div class="bg-white border border-stone-200 rounded p-6 sticky top-24">
-          <h2 class="text-lg font-serif font-bold text-stone-800 mb-6 border-b border-stone-100 pb-2">Подкатегории</h2>
-          
+      <aside class="w-full flex-shrink-0 lg:w-64">
+        <div class="sticky top-24 rounded border border-stone-200 bg-white p-6">
+          <h2 class="mb-6 border-b border-stone-100 pb-2 font-serif text-lg font-bold text-stone-800">Подкатегории</h2>
+
           {subCategories.length > 0 ? (
             <ul class="space-y-3" id="subcategory-filters">
               <li>
-                <a href="#" data-subcategory="all" class="subcategory-link text-amber-700 font-bold flex items-center group transition-colors">
-                  <span class="w-2 h-2 bg-amber-700 rounded-full mr-3 transition-colors"></span>
+                <a href="#" data-subcategory="all" class="subcategory-link flex items-center font-bold text-amber-700 transition-colors group">
+                  <span class="mr-3 h-2 w-2 rounded-full bg-amber-700 transition-colors"></span>
                   Всички
                 </a>
               </li>
               {subCategories.map(sub => (
                 <li>
-                  <a href="#" data-subcategory={sub.name} class="subcategory-link text-stone-600 hover:text-amber-700 flex items-center group transition-colors">
-                    <span class="w-2 h-2 bg-stone-200 rounded-full mr-3 group-hover:bg-amber-700 transition-colors"></span>
+                  <a href="#" data-subcategory={sub.name} class="subcategory-link flex items-center text-stone-600 transition-colors hover:text-amber-700 group">
+                    <span class="mr-3 h-2 w-2 rounded-full bg-stone-200 transition-colors group-hover:bg-amber-700"></span>
                     {sub.name}
                   </a>
                 </li>
               ))}
             </ul>
           ) : (
-            <p class="text-stone-500 italic text-sm">Няма подкатегории</p>
+            <p class="text-sm italic text-stone-500">Няма подкатегории</p>
           )}
 
-          <div class="mt-10 pt-8 border-t border-stone-100">
-            <h3 class="text-sm font-bold text-stone-800 uppercase tracking-wider mb-4">Филтрирай</h3>
+          <div class="mt-10 border-t border-stone-100 pt-8">
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-stone-800">Филтрирай</h3>
             <div class="space-y-4">
               <div>
-                <label class="block text-xs font-bold text-stone-500 mb-2 uppercase">Цена</label>
+                <label class="mb-2 block text-xs font-bold uppercase text-stone-500">Цена</label>
                 <div class="flex gap-2">
-                  <input type="number" id="min-price" placeholder="Мин" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
-                  <input type="number" id="max-price" placeholder="Макс" class="w-full text-xs border border-stone-200 px-2 py-1 rounded" />
+                  <input type="number" id="min-price" placeholder="Мин" class="w-full rounded border border-stone-200 px-2 py-1 text-xs" />
+                  <input type="number" id="max-price" placeholder="Макс" class="w-full rounded border border-stone-200 px-2 py-1 text-xs" />
                 </div>
               </div>
             </div>
@@ -75,71 +90,79 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
       </aside>
 
       <!-- Items Grid -->
-      <div class="flex-grow">
-        <div class="flex justify-between items-center mb-8 bg-stone-50 p-4 rounded border border-stone-200">
-          <p class="text-stone-600 text-sm">Показване на <span id="results-count" class="font-bold text-stone-800">{categoryItems.length}</span> резултата</p>
-          <select id="sort-by" class="bg-transparent text-sm text-stone-800 font-medium focus:outline-none cursor-pointer">
+      <div class="min-w-0 flex-grow">
+        <div class="mb-8 flex flex-col gap-4 rounded-lg border border-stone-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm text-stone-600">Показване на <span id="results-count" class="font-bold text-stone-900">{categoryItems.length}</span> резултата</p>
+          <select id="sort-by" class="w-full cursor-pointer rounded border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-600 sm:w-auto">
             <option value="newest">Най-нови</option>
             <option value="price-asc">Цена: възходяща</option>
             <option value="price-desc">Цена: низходяща</option>
           </select>
         </div>
 
-        <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-          {categoryItems.map(item => {
+        <div id="items-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {categoryItems.map((item, index) => {
             const firstAddedImage = item.data.images[item.data.images.length - 1];
             const firstImageUrl = typeof firstAddedImage === 'string' ? firstAddedImage : firstAddedImage.url;
-            // Transform /uploads/ to /optimized/ so getImageSet produces correct paths
             const optimizedBase = firstImageUrl.replace('/uploads/', '/optimized/');
             const imgSet = getImageSet(optimizedBase);
             return (
-              <div class="item-card group cursor-pointer" data-price={item.data.price} data-subcategory={item.data.subcategory}>
-                <div class="aspect-[4/5] bg-stone-200 relative overflow-hidden rounded mb-4">
-                  {item.data.images && item.data.images.length > 0 ? (
-                    <img 
-                      src={imgSet.medium} 
-                      srcset={`${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w`}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                      alt={item.data.title} 
-                      class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                  ) : (
-                    <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
-                      [Няма изображение]
+              <article class="item-card group overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg shadow-stone-950/5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-600/70 hover:shadow-xl hover:shadow-stone-950/10" data-price={item.data.price} data-subcategory={item.data.subcategory} data-order={index}>
+                <a href={`/antiques/${item.id}`} class="block">
+                  <div class="relative aspect-[4/5] overflow-hidden bg-stone-200">
+                    {item.data.images && item.data.images.length > 0 ? (
+                      <img
+                        src={imgSet.medium}
+                        srcset={`${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w`}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        alt={item.data.title}
+                        class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
+                        [Няма изображение]
+                      </div>
+                    )}
+                    <div class="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/5 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                      <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                        Виж детайли
+                      </span>
+                      <span class="h-px flex-1 bg-amber-500/70"></span>
                     </div>
-                  )}
-                  <div class="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/10 transition-colors duration-300"></div>
-                  <div class="absolute bottom-4 left-4 right-4 translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
-                    <a href={`/antiques/${item.id}`} class="block w-full bg-white text-stone-900 py-2 text-center text-sm font-bold shadow-lg hover:bg-stone-100">
-                      Виж детайли
-                    </a>
                   </div>
-                </div>
-                <h3 class="text-lg font-serif font-bold text-stone-800 group-hover:text-amber-700 transition-colors mb-1">
-                  {item.data.title}
-                </h3>
-                <p class="text-stone-500 text-sm mb-2">{item.data.subcategory}</p>
-                <p class="text-amber-800 font-bold">€{item.data.price?.toLocaleString() || 'N/A'}</p>
-              </div>
+                  <div class="p-5">
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">{item.data.subcategory}</p>
+                    <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950 transition-colors group-hover:text-amber-700">
+                      {item.data.title}
+                    </h3>
+                    <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                      <span class="text-sm text-stone-500">Цена</span>
+                      <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                    </div>
+                  </div>
+                </a>
+              </article>
             );
           })}
         </div>
 
-        <div id="no-results" class="hidden py-20 text-center bg-stone-50 border border-dashed border-stone-200 rounded">
+        <div id="no-results" class="hidden rounded-lg border border-dashed border-stone-300 bg-white py-20 text-center">
           <p class="text-stone-500 italic">Няма намерени предмети в този ценови диапазон.</p>
         </div>
 
         {categoryItems.length === 0 && (
-          <div class="py-20 text-center bg-stone-50 border border-dashed border-stone-200 rounded">
+          <div class="rounded-lg border border-dashed border-stone-300 bg-white py-20 text-center">
             <p class="text-stone-500 italic">В момента няма налични предмети в тази категория.</p>
           </div>
         )}
 
-        {/* Pagination - Only show if many items */}
         {categoryItems.length > 12 && (
           <div id="pagination" class="mt-16 flex justify-center gap-2">
-            <button class="w-10 h-10 flex items-center justify-center rounded border border-amber-700 bg-amber-700 text-white font-bold">1</button>
-            <button class="w-10 h-10 flex items-center justify-center rounded border border-stone-200 text-stone-600 hover:border-amber-700 hover:text-amber-700 transition-colors">2</button>
+            <button class="flex h-10 w-10 items-center justify-center rounded border border-amber-700 bg-amber-700 font-bold text-white">1</button>
+            <button class="flex h-10 w-10 items-center justify-center rounded border border-stone-200 text-stone-600 transition-colors hover:border-amber-700 hover:text-amber-700">2</button>
             <span class="flex items-center px-2">...</span>
           </div>
         )}
@@ -165,31 +188,26 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
     cards.forEach(card => {
       const price = parseFloat(card.dataset.price || '0');
       const subcat = card.dataset.subcategory || '';
-      
       const priceMatch = price >= minPrice && price <= maxPrice;
       const subcatMatch = activeSubcategory === 'all' || subcat === activeSubcategory;
-      
       const isVisible = priceMatch && subcatMatch;
-      
+
       card.style.display = isVisible ? 'block' : 'none';
       if (isVisible) visibleCount++;
     });
 
-    // Sorting
     const sortedCards = cards.filter(card => card.style.display !== 'none').sort((a, b) => {
       const priceA = parseFloat(a.dataset.price || '0');
       const priceB = parseFloat(b.dataset.price || '0');
-      const titleA = (a.querySelector('h3')?.textContent || '').trim();
-      const titleB = (b.querySelector('h3')?.textContent || '').trim();
+      const orderA = parseInt(a.dataset.order || '0', 10);
+      const orderB = parseInt(b.dataset.order || '0', 10);
 
       if (sortBy === 'price-asc') return priceA - priceB;
       if (sortBy === 'price-desc') return priceB - priceA;
-      return titleA.localeCompare(titleB);
+      return orderA - orderB;
     });
 
-    if (sortBy !== 'newest' || visibleCount < cards.length) {
-      sortedCards.forEach(card => itemsGrid?.appendChild(card));
-    }
+    sortedCards.forEach(card => itemsGrid?.appendChild(card));
 
     if (visibleCount === 0 && cards.length > 0) {
       noResults?.classList.remove('hidden');
@@ -200,25 +218,19 @@ const categoryItems = allAntiques.filter(item => item.data.category === category
     }
 
     if (resultsCount) resultsCount.textContent = visibleCount.toString();
-    
+
     const pagination = document.getElementById('pagination');
     if (pagination) {
-      if (visibleCount < cards.length) {
-        pagination.style.display = 'none';
-      } else {
-        pagination.style.display = 'flex';
-      }
+      pagination.style.display = visibleCount < cards.length ? 'none' : 'flex';
     }
   }
 
-  // Subcategory link handling
   document.querySelectorAll('.subcategory-link').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const target = e.currentTarget as HTMLElement;
       activeSubcategory = target.dataset.subcategory || 'all';
 
-      // Update UI classes
       document.querySelectorAll('.subcategory-link').forEach(l => {
         l.classList.remove('text-amber-700', 'font-bold');
         l.classList.add('text-stone-600');
