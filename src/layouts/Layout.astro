@@ -34,9 +34,9 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 			<slot />
 		</main>
 
-		<footer class="mt-20 bg-stone-950 text-stone-300">
+		<footer class="bg-stone-950 text-stone-300">
 			<div class="container mx-auto px-4">
-				<div class="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1.1fr] lg:gap-12 lg:py-16">
+				<div class="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1fr_1.1fr] lg:gap-10 lg:py-16">
 					<div class="text-center sm:text-left">
 						<a href="/" class="mb-5 inline-flex justify-center sm:justify-start">
 							<img src="/images/AntiqueShopLogo.png" alt="Antique Shop Logo" class="h-20 w-auto brightness-0 invert sm:h-24" />
@@ -70,6 +70,14 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 							</div>
 							<span class="text-sm font-medium">Instagram</span>
 						</a>
+					</div>
+					<div class="text-center sm:text-left">
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Условия</h3>
+						<ul class="space-y-3 text-sm">
+							<li><a href="/nachini-na-plashtane" class="hover:text-amber-500 transition-colors">Начини на плащане</a></li>
+							<li><a href="/usloviya-na-dostavka" class="hover:text-amber-500 transition-colors">Условия на доставка</a></li>
+							<li><a href="/vrashtane-i-zamyana" class="hover:text-amber-500 transition-colors">Връщане и замяна</a></li>
+						</ul>
 					</div>
 					<div class="text-center sm:text-left">
 						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Контакти</h3>
