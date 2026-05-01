@@ -104,11 +104,19 @@ const newestItems = allAntiques
                   </div>
                 )}
                 <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  Избрано
+                </div>
                 <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
                   <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
                     Виж детайли
                   </span>
                   <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} снимки
+                    </span>
+                  )}
                 </div>
               </div>
               <div class="p-5">
@@ -192,11 +200,19 @@ const newestItems = allAntiques
                   </div>
                 )}
                 <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  Ново
+                </div>
                 <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
                   <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
                     Виж детайли
                   </span>
                   <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} снимки
+                    </span>
+                  )}
                 </div>
               </div>
               <div class="p-5">
