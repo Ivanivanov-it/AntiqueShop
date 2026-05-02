@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { categories, getCategoryName, getSlug } from "../utils/categories.js";
+import { categories, getCategoryDescription, getCategoryName, getSlug } from "../utils/categories.js";
 import { locales, localizedPath, switchLocalePath, t } from "../utils/i18n.js";
 
 const { bodyClass = "bg-stone-50", title, description } = Astro.props;
@@ -42,7 +42,35 @@ const footer = content.footer;
 			<nav class="container mx-auto flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:py-5">
 				<a href={localizedPath(currentLocale)} class="flex justify-center sm:justify-start"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-16 w-auto sm:h-20 lg:h-24" /></a>
 				<ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm font-semibold uppercase tracking-wide text-stone-800 sm:justify-end sm:text-base sm:normal-case sm:tracking-normal">
-					<li><a href={localizedPath(currentLocale, "/categories")} class="hover:text-amber-700 transition-colors">{nav.categories}</a></li>
+					<li class="group relative w-full sm:w-auto">
+						<a href={localizedPath(currentLocale, "/categories")} class="inline-flex w-full items-center justify-center gap-1.5 py-2 hover:text-amber-700 transition-colors sm:w-auto" aria-haspopup="true">
+							{nav.categories}
+							<svg class="h-3.5 w-3.5 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+								<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+							</svg>
+						</a>
+						<div class="z-50 hidden w-full opacity-0 transition duration-150 group-hover:block group-hover:opacity-100 group-focus-within:block group-focus-within:opacity-100 sm:invisible sm:absolute sm:left-1/2 sm:top-full sm:block sm:w-[min(92vw,54rem)] sm:-translate-x-1/2 sm:pt-3 sm:group-hover:visible sm:group-focus-within:visible">
+							<div class="overflow-hidden rounded-lg border border-stone-200 bg-white text-left normal-case tracking-normal shadow-xl ring-1 ring-black/5 sm:shadow-2xl">
+								<div class="flex items-center justify-between gap-4 border-b border-stone-100 bg-stone-50 px-4 py-3 sm:px-5 sm:py-4">
+									<span class="text-xs font-bold uppercase tracking-[0.18em] text-stone-500">{nav.categories}</span>
+									<a href={localizedPath(currentLocale, "/categories")} class="text-sm font-bold text-amber-800 transition-colors hover:text-amber-950">
+										{currentLocale === "bg" ? "Всички" : "All"}
+									</a>
+								</div>
+								<div class="grid max-h-[min(62vh,30rem)] gap-1 overflow-y-auto p-2 sm:max-h-[70vh] sm:grid-cols-2 sm:p-3 lg:grid-cols-3">
+									{categories.map((category) => (
+										<a href={localizedPath(currentLocale, `/categories/${getSlug(category)}`)} class="group/category grid grid-cols-[3.25rem_1fr] gap-3 rounded-md p-2.5 transition-colors hover:bg-amber-50 focus-visible:bg-amber-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 sm:grid-cols-[3.75rem_1fr] sm:p-3">
+											<img src={category.image} alt="" class="h-12 w-12 rounded-md object-cover ring-1 ring-stone-200 sm:h-14 sm:w-14" loading="lazy" />
+											<span class="min-w-0">
+												<span class="block text-sm font-bold leading-snug text-stone-900 transition-colors group-hover/category:text-amber-800">{getCategoryName(category, currentLocale)}</span>
+												<span class="mt-1 line-clamp-2 block text-xs font-medium leading-relaxed text-stone-500">{getCategoryDescription(category, currentLocale)}</span>
+											</span>
+										</a>
+									))}
+								</div>
+							</div>
+						</div>
+					</li>
 					<li><a href={localizedPath(currentLocale, "/about")} class="hover:text-amber-700 transition-colors">{nav.about}</a></li>
 					<li><a href={localizedPath(currentLocale, "/contact")} class="hover:text-amber-700 transition-colors">{nav.contact}</a></li>
 					<li>
