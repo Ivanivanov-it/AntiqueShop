@@ -11,7 +11,7 @@ const copy = {
       switchAria: 'Switch language to English',
     },
     seo: {
-      siteName: 'Antique Shop',
+      siteName: 'Антикварен Магазин Берлин',
       description: 'Подбрани антики, редки предмети и колекционерски обекти с история и характер.',
     },
     footer: {
@@ -41,7 +41,7 @@ const copy = {
       switchAria: 'Switch language to Bulgarian',
     },
     seo: {
-      siteName: 'Antique Shop',
+      siteName: 'Antique Shop Berlin',
       description: 'Curated antiques, rare objects, and collectible pieces with history and character.',
     },
     footer: {
@@ -83,59 +83,10 @@ export const switchLocalePath = (pathname, nextLocale) => localizedPath(nextLoca
 
 export const staticLocalePaths = () => locales.map((locale) => ({ params: { locale } }));
 
-const itemTranslations = {
-  en: {
-    'графика': {
-      title: 'Print',
-      description: 'Graphic work / print.',
-    },
-    'книга': {
-      title: 'Book',
-      description: 'Antique or collectible book.',
-    },
-    'носия': {
-      title: 'Traditional Folk Costume',
-      description: 'Traditional garment.',
-    },
-    'порцелан': {
-      title: 'Porcelain',
-      description: 'Porcelain object.',
-    },
-    'северняшка-народна-носия': {
-      title: 'Northern Bulgarian Folk Costume',
-      description: 'Shirt: length 127 cm, sleeve 37 cm, shoulders 35 cm, chest 90 cm. Apron: 91/40 cm. Pishtimal: length 56 cm, waist 51 cm, unfolded width 330 cm. Only the garments are sold, without the jewelry. Not sold separately.',
-    },
-    'скулптура': {
-      title: 'Sculpture',
-      description: 'Sculpture.',
-    },
-    'слънчогледи': {
-      title: 'Sunflowers',
-      description: 'Sunflower painting.',
-    },
-    'часовник': {
-      title: 'Watch',
-      description: 'Watch.',
-    },
-    'часовници': {
-      title: 'Clocks and Watches',
-      description: 'Clocks and watches.',
-    },
-    'часовници222': {
-      title: 'Table Clocks 222',
-      description: 'Table clocks.',
-    },
-    'Порцеланови неща': {
-      title: 'Porcelain Items',
-      description: 'Porcelain items.',
-    }
-  },
-};
-
 export const getItemTitle = (item, locale = defaultLocale) => {
-  return itemTranslations[locale]?.[item.id]?.title || item.data.title;
+  return item.data.title;
 };
 
 export const getItemDescription = (item, locale = defaultLocale) => {
-  return itemTranslations[locale]?.[item.id]?.description || item.data.description;
+  return item.data.description;
 };

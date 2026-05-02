@@ -300,3 +300,28 @@ Error: Failed to load url astro:server-app.js (resolved id: astro:server-app.js)
 [2m23:08:17[22m [33m[404][39m /images/optimized/category-porcelain-800.webp [2m1ms[22m
 [2m23:09:42[22m [33m[404][39m /images/optimized/category-porcelain-400.webp [2m2ms[22m
 [2m23:09:43[22m [33m[404][39m /@id/astro/runtime/client/dev-toolbar/astro_runtime_client_dev-toolbar_entrypoint__js.js.map [2m1ms[22m
+[2m23:10:20[22m [34m[200][39m /en/categories [2m5ms[22m
+[2m23:10:22[22m [34m[200][39m /en/categories/porcelan [2m10ms[22m
+[2m23:10:22[22m [33m[404][39m /images/optimized/порцелан-800.webp [2m1ms[22m
+[2m23:10:22[22m [33m[404][39m /images/optimized/порцелан-800.webp [2m1ms[22m
+[2m23:10:23[22m [34m[200][39m /en/antiques/порцеланови-неща [2m6ms[22m
+[2m23:10:38[22m [34m[200][39m /bg/antiques/порцеланови-неща [2m5ms[22m
+[2m23:10:54[22m [34m[200][39m /bg/antiques/порцеланови-неща [2m5ms[22m
+[2m23:10:56[22m [34m[200][39m /bg/categories [2m5ms[22m
+[2m23:11:01[22m [34m[200][39m /bg/categories/kolektsionerski-predmeti [2m6ms[22m
+[2m23:11:03[22m [34m[200][39m /bg/categories [2m4ms[22m
+[2m23:11:05[22m [34m[200][39m /bg/categories/etnika-i-folklor [2m7ms[22m
+[2m23:11:06[22m [33m[404][39m /images/optimized/3041-800.webp [2m1ms[22m
+[2m23:11:06[22m [33m[404][39m /images/optimized/3041-800.webp [2m1ms[22m
+[2m23:11:06[22m [34m[200][39m /bg/antiques/северняшка-народна-носия [2m6ms[22m
+[2m23:11:10[22m [34m[200][39m /en/antiques/северняшка-народна-носия [2m4ms[22m
+[2m23:11:14[22m [34m[200][39m /en/categories [2m4ms[22m
+[2m23:11:16[22m [34m[200][39m /en/categories/porcelan [2m7ms[22m
+[2m23:11:16[22m [33m[404][39m /images/optimized/порцелан-800.webp [2m1ms[22m
+[2m23:11:16[22m [33m[404][39m /images/optimized/порцелан-800.webp [2m1ms[22m
+[2m23:11:17[22m [34m[200][39m /en/antiques/порцеланови-неща [2m5ms[22m
+[2m00:33:46[22m [34m[watch][39m src/layouts/Layout.astro
+[2m00:34:33[22m [34m[watch][39m /src/styles/global.css
+[2m00:34:36[22m [34m[watch][39m /src/styles/global.css
+[2m00:39:40[22m [34m[watch][39m /src/styles/global.css
+[2m00:39:50[22m [34m[watch][39m /src/styles/global.css
