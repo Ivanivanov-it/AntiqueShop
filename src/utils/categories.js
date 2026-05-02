@@ -15,16 +15,16 @@ export const categories = [
   { 
     slug: 'porcelan', 
     name: 'Порцелан', 
-    description: 'Стари изделия от порцелан и керамика.',
+    description: 'Керамика и порцелан.',
     subcategories: [],
-    image: '/images/categories/porcelan-category.webp'
+    image: '/images/categories/category-porcelain.webp'
   },
   { 
     slug: 'starinni-bizhuta', 
     name: 'Старинни бижута', 
     description: 'Етнографски накити и страринни бижута.',
     subcategories: [],
-    image: '/images/categories/old-jewelry.webp'
+    image: '/images/categories/category-jewelry.webp'
   },
   { 
     slug: 'izobrazitelno-izkustvo', 
@@ -35,7 +35,7 @@ export const categories = [
       { slug: 'grafika', name: 'Графика' },
       { slug: 'skulptura', name: 'Скулптура' }
     ],
-    image: '/images/categories/antique-art.webp'
+    image: '/images/categories/category-art.webp'
   },
   { 
     slug: 'kolektsionerski-predmeti', 
@@ -49,7 +49,7 @@ export const categories = [
       { slug: 'detski-igrachki', name: 'Детски играчки' },
       { slug: 'drugi', name: 'Други' }
     ],
-    image: '/images/categories/collection-items.webp'
+    image: '/images/categories/category-collections.webp'
   },
   { 
     slug: 'etnika-i-folklor', 
@@ -60,27 +60,27 @@ export const categories = [
       { slug: 'nakiti', name: 'Накити' },
       { slug: 'drugi', name: 'Други' }
     ],
-    image: '/images/categories/ethnics-folklore.webp'
+    image: '/images/categories/category-folklor.webp'
   },
   { 
     slug: 'suveniri-i-podaratsi', 
     name: 'Сувенири и Подараци', 
     description: 'Сувенири и подаръци с антикварна стойност.',
     subcategories: [],
-    image: '/images/categories/antique-gifts.webp'
+    image: '/images/categories/category-gifts.webp'
   },
   { 
     slug: 'knigi', 
     name: 'Книги', 
     description: 'Книги',
     subcategories: [],
-    image: '/images/categories/antique-books.webp' },
+    image: '/images/categories/category-books.webp' },
   { 
     slug: 'voenni-predmeti', 
     name: 'Военни предмети', 
     description: 'Антикварни военни предмети и артефакти.',
     subcategories: [],
-    image: '/images/categories/antique-military-goods.webp'
+    image: '/images/categories/category-military.webp'
   }
 ];
 
