@@ -87,3 +87,106 @@ export const categories = [
 export const getSlug = (category) => {
   return category.slug;
 };
+
+const localizedCategories = {
+  bg: {},
+  en: {
+    'antikvarni-chasovnici': {
+      name: 'Antique clocks and watches',
+      description: 'Pocket watches, wall clocks, wristwatches, and mantel clocks.',
+      subcategories: {
+        'dzhobni-chasovnici': 'Pocket watches',
+        'stenni-chasovnici': 'Wall clocks',
+        'rachni-chasovnici': 'Wristwatches',
+        'nastolni-chasovnici': 'Mantel and table clocks',
+        'drugi': 'Other',
+      },
+    },
+    porcelan: {
+      name: 'Porcelain',
+      description: 'Ceramic and porcelain objects.',
+    },
+    'starinni-bizhuta': {
+      name: 'Antique jewelry',
+      description: 'Ethnographic adornments and antique jewelry.',
+    },
+    'izobrazitelno-izkustvo': {
+      name: 'Fine art',
+      description: 'Original paintings and rare lithographs.',
+      subcategories: {
+        jivopis: 'Paintings',
+        grafika: 'Prints and graphic works',
+        skulptura: 'Sculpture',
+      },
+    },
+    'kolektsionerski-predmeti': {
+      name: 'Collectibles',
+      description: 'Distinctive objects with a story to tell.',
+      subcategories: {
+        moneti: 'Coins',
+        'medali-i-ordeni': 'Medals and orders',
+        filatelia: 'Philately',
+        znachki: 'Badges',
+        'detski-igrachki': 'Vintage toys',
+        drugi: 'Other',
+      },
+    },
+    'etnika-i-folklor': {
+      name: 'Ethnographic and folk objects',
+      description: 'Historical garments and traditional accessories.',
+      subcategories: {
+        obleklo: 'Traditional garments',
+        nakiti: 'Adornment',
+        drugi: 'Other',
+      },
+    },
+    'suveniri-i-podaratsi': {
+      name: 'Souvenirs and gifts',
+      description: 'Souvenirs and gifts with antique value.',
+    },
+    knigi: {
+      name: 'Books',
+      description: 'Books and printed works.',
+    },
+    'voenni-predmeti': {
+      name: 'Military antiques',
+      description: 'Antique military objects and artifacts.',
+    },
+  },
+};
+
+const localizedSubcategoryNames = {
+  en: {
+    'Джобни часовници': 'Pocket watches',
+    'Джобни часновници': 'Pocket watches',
+    'Стенни часовници': 'Wall clocks',
+    'Ръчни часовници': 'Wristwatches',
+    'Настолни часовници': 'Mantel and table clocks',
+    'Часовник': 'Clock or watch',
+    'Живопис': 'Paintings',
+    'Графика': 'Prints and graphic works',
+    'Скулптура': 'Sculpture',
+    'Облекло': 'Traditional garments',
+    'Накити': 'Adornment',
+    'Други': 'Other',
+  },
+};
+
+export const getCategoryName = (category, locale = 'bg') => {
+  return localizedCategories[locale]?.[category.slug]?.name || category.name;
+};
+
+export const getCategoryDescription = (category, locale = 'bg') => {
+  return localizedCategories[locale]?.[category.slug]?.description || category.description;
+};
+
+export const getSubcategoryName = (category, subcategoryName, locale = 'bg') => {
+  const subcategory = category?.subcategories?.find((item) => item.name === subcategoryName);
+  if (!subcategory) return localizedSubcategoryNames[locale]?.[subcategoryName] || subcategoryName;
+  return localizedCategories[locale]?.[category.slug]?.subcategories?.[subcategory.slug] || localizedSubcategoryNames[locale]?.[subcategoryName] || subcategoryName;
+};
+
+export const getSubcategoryNameByCategoryName = (categoryName, subcategoryName, locale = 'bg') => {
+  const category = categories.find((item) => item.name === categoryName);
+  return getSubcategoryName(category, subcategoryName, locale);
+};

@@ -1,31 +1,55 @@
 ---
 import "../styles/global.css";
-import { categories, getSlug } from "../utils/categories.js";
+import { categories, getCategoryName, getSlug } from "../utils/categories.js";
+import { locales, localizedPath, switchLocalePath, t } from "../utils/i18n.js";
 
-const { bodyClass = "bg-stone-50" } = Astro.props;
+const { bodyClass = "bg-stone-50", title, description } = Astro.props;
+const currentLocale = Astro.currentLocale || "bg";
+const content = t(currentLocale);
+const localizeProp = (value) => typeof value === "object" && value !== null ? value[currentLocale] || value.bg : value;
+const currentPath = Astro.url.pathname;
+const currentPathWithoutLocale = currentPath.replace(/^\/(bg|en)(?=\/|$)/, "") || "/";
+const localizedTitle = localizeProp(title);
+const pageTitle = localizedTitle ? `${localizedTitle} | ${content.seo.siteName}` : content.seo.siteName;
+const pageDescription = localizeProp(description) || content.seo.description;
+const urlBase = Astro.site || Astro.url.origin;
+const canonicalUrl = new URL(currentPath, urlBase);
+const alternateUrls = locales.map((locale) => ({
+	locale,
+	href: new URL(localizedPath(locale, currentPathWithoutLocale), urlBase),
+}));
+const nextLocale = currentLocale === "bg" ? "en" : "bg";
+const nav = content.nav;
+const footer = content.footer;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={currentLocale}>
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Antique Shop</title>
-
-
+		<title>{pageTitle}</title>
+		<meta name="description" content={pageDescription} />
+		<link rel="canonical" href={canonicalUrl.href} />
+		{alternateUrls.map(({ locale, href }) => <link rel="alternate" hreflang={locale} href={href.href} />)}
+		<link rel="alternate" hreflang="x-default" href={alternateUrls.find(({ locale }) => locale === "bg")?.href.href} />
 	</head>
 	<body class={`${bodyClass} text-stone-900 flex flex-col min-h-screen`}>
 		<header class="bg-white shadow-sm sticky top-0 z-50">
 			<nav class="container mx-auto flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:py-5">
-				<a href="/" class="flex justify-center sm:justify-start"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-16 w-auto sm:h-20 lg:h-24" /></a>
-				<ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm font-semibold uppercase tracking-wide text-stone-800 sm:justify-end sm:text-base sm:normal-case sm:tracking-normal">
-					<!-- <li><a href="/" class="hover:text-amber-700 transition-colors">Home</a></li> -->
-					<li><a href="/categories" class="hover:text-amber-700 transition-colors">Категории</a></li>
-					<li><a href="/about" class="hover:text-amber-700 transition-colors">За нас</a></li>
-					<li><a href="/contact" class="hover:text-amber-700 transition-colors">Контакти</a></li>
+				<a href={localizedPath(currentLocale)} class="flex justify-center sm:justify-start"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-16 w-auto sm:h-20 lg:h-24" /></a>
+				<ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm font-semibold uppercase tracking-wide text-stone-800 sm:justify-end sm:text-base sm:normal-case sm:tracking-normal">
+					<li><a href={localizedPath(currentLocale, "/categories")} class="hover:text-amber-700 transition-colors">{nav.categories}</a></li>
+					<li><a href={localizedPath(currentLocale, "/about")} class="hover:text-amber-700 transition-colors">{nav.about}</a></li>
+					<li><a href={localizedPath(currentLocale, "/contact")} class="hover:text-amber-700 transition-colors">{nav.contact}</a></li>
+					<li>
+						<a href={switchLocalePath(currentPath, nextLocale)} hreflang={nextLocale} aria-label={nav.switchAria} class="rounded border border-amber-700 px-3 py-2 text-xs font-bold uppercase tracking-wide text-amber-800 transition-colors hover:bg-amber-700 hover:text-white">
+							{nav.switchLabel}
+						</a>
+					</li>
 				</ul>
 			</nav>
 		</header>
@@ -38,28 +62,26 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 			<div class="container mx-auto px-4">
 				<div class="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1fr_1.1fr] lg:gap-10 lg:py-16">
 					<div class="text-center sm:text-left">
-						<a href="/" class="mb-5 inline-flex justify-center sm:justify-start">
+						<a href={localizedPath(currentLocale)} class="mb-5 inline-flex justify-center sm:justify-start">
 							<img src="/images/AntiqueShopLogo.png" alt="Antique Shop Logo" class="h-20 w-auto brightness-0 invert sm:h-24" loading="lazy" />
 						</a>
-						<p class="mx-auto max-w-xs text-sm leading-relaxed text-stone-400 sm:mx-0">
-							Подбрани антики, редки предмети и обекти с характер за дома и колекцията.
-						</p>
+						<p class="mx-auto max-w-xs text-sm leading-relaxed text-stone-400 sm:mx-0">{footer.intro}</p>
 					</div>
 					<div class="text-center sm:text-left">
-						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Категории</h3>
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">{footer.categories}</h3>
 						<ul class="grid grid-cols-1 gap-3 text-sm sm:gap-2">
-							{categories.slice(0, 10).map(category => (
-								<li><a href={`/categories/${getSlug(category)}`} class="hover:text-amber-500 transition-colors">{category.name}</a></li>
+							{categories.slice(0, 10).map((category) => (
+								<li><a href={localizedPath(currentLocale, `/categories/${getSlug(category)}`)} class="hover:text-amber-500 transition-colors">{getCategoryName(category, currentLocale)}</a></li>
 							))}
 						</ul>
 					</div>
 					<div class="text-center sm:text-left">
-						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Бързи връзки</h3>
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">{footer.quickLinks}</h3>
 						<ul class="mb-8 space-y-3 text-sm">
-							<li><a href="/about" class="hover:text-amber-500 transition-colors">За нас</a></li>
-							<li><a href="/contact" class="hover:text-amber-500 transition-colors">Свържете се с нас</a></li>
+							<li><a href={localizedPath(currentLocale, "/about")} class="hover:text-amber-500 transition-colors">{footer.about}</a></li>
+							<li><a href={localizedPath(currentLocale, "/contact")} class="hover:text-amber-500 transition-colors">{footer.contactLink}</a></li>
 						</ul>
-						<h3 class="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-white">Последвайте ни</h3>
+						<h3 class="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-white">{footer.follow}</h3>
 						<a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 hover:text-amber-500 transition-colors group">
 							<div class="w-10 h-10 bg-stone-800 rounded-full flex items-center justify-center group-hover:bg-amber-700 transition-colors">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -72,29 +94,27 @@ const { bodyClass = "bg-stone-50" } = Astro.props;
 						</a>
 					</div>
 					<div class="text-center sm:text-left">
-						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Условия</h3>
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">{footer.terms}</h3>
 						<ul class="space-y-3 text-sm">
-							<li><a href="/nachini-na-plashtane" class="hover:text-amber-500 transition-colors">Начини на плащане</a></li>
-							<li><a href="/usloviya-na-dostavka" class="hover:text-amber-500 transition-colors">Условия на доставка</a></li>
-							<li><a href="/vrashtane-i-zamyana" class="hover:text-amber-500 transition-colors">Връщане и замяна</a></li>
+							<li><a href={localizedPath(currentLocale, "/nachini-na-plashtane")} class="hover:text-amber-500 transition-colors">{footer.payment}</a></li>
 						</ul>
 					</div>
 					<div class="text-center sm:text-left">
-						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">Контакти</h3>
+						<h3 class="mb-5 text-sm font-bold uppercase tracking-[0.18em] text-white">{footer.contacts}</h3>
 						<div class="space-y-4 text-sm leading-relaxed text-stone-400">
 							<p>
-								<span class="block font-semibold text-stone-200">Антикварен магазин Берлин</span>
-								Селекция, оценка и консултация за ценни предмети.
+								<span class="block font-semibold text-stone-200">{footer.shopName}</span>
+								{footer.shopText}
 							</p>
-							<a href="/contact" class="inline-flex rounded border border-amber-600/60 px-5 py-3 text-xs font-bold uppercase tracking-wide text-amber-400 transition-colors hover:bg-amber-600 hover:text-stone-950">
-								Свържете се с нас
+							<a href={localizedPath(currentLocale, "/contact")} class="inline-flex rounded border border-amber-600/60 px-5 py-3 text-xs font-bold uppercase tracking-wide text-amber-400 transition-colors hover:bg-amber-600 hover:text-stone-950">
+								{footer.contactLink}
 							</a>
 						</div>
 					</div>
 				</div>
 				<div class="border-t border-stone-800 py-6 text-center text-xs text-stone-500 sm:flex sm:items-center sm:justify-between sm:text-left">
-					&copy; {new Date().getFullYear()} AntiqueShop. All rights reserved.
-					<span class="mt-2 block sm:mt-0">Антики с история и характер.</span>
+					&copy; {new Date().getFullYear()} AntiqueShop. {footer.rights}
+					<span class="mt-2 block sm:mt-0">{footer.tagline}</span>
 				</div>
 			</div>
 		</footer>

@@ -1,0 +1,39 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import { staticLocalePaths } from '../../utils/i18n.js';
+
+export function getStaticPaths() {
+  return staticLocalePaths();
+}
+
+const currentLocale = Astro.currentLocale || 'bg';
+const bgCopy = {
+    eyebrow: 'Условия',
+    title: 'Връщане и замяна',
+    text: 'Всеки артикул се описва и представя с внимание към неговото реално състояние, следи от употреба и особености. При въпрос относно връщане или замяна се свържете с нас възможно най-скоро, за да разгледаме конкретния случай и приложимите условия.',
+};
+
+const enCopy = {
+    eyebrow: 'Terms',
+    title: 'Returns and exchanges',
+    text: 'Every antique object is described and presented with attention to its actual condition, signs of age, and individual characteristics. For questions about returns or exchanges, contact us as soon as possible so we can review the specific case and applicable terms.',
+};
+
+const copy = currentLocale === 'en' ? enCopy : bgCopy;
+---
+
+<Layout title={{ bg: "Връщане и замяна", en: "Returns and exchanges" }} description={{ bg: "Информация за връщане и замяна на антикварни предмети от Antique Shop.", en: "Returns and exchanges information for antique objects from Antique Shop." }}>
+  <section class="bg-stone-100 py-16 sm:py-20">
+    <div class="container mx-auto px-4">
+      <div class="mx-auto max-w-3xl">
+        <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">{copy.eyebrow}</span>
+        <h1 class="font-serif text-4xl font-bold text-stone-900 sm:text-5xl">{copy.title}</h1>
+        <div class="mt-8 space-y-5 text-base leading-relaxed text-stone-700">
+          <p>{copy.text}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+

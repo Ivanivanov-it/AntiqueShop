@@ -1,0 +1,57 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import { staticLocalePaths } from '../../utils/i18n.js';
+
+export function getStaticPaths() {
+  return staticLocalePaths();
+}
+
+const currentLocale = Astro.currentLocale || 'bg';
+const bgCopy = {
+    eyebrow: 'Условия',
+    title: 'Начини на плащане',
+    local: 'В България',
+    international: 'В чужбина',
+    buyerPays: 'Купувачът поема разходите за доставка.',
+    cod: 'Плащането се извършва чрез наложен платеж с възможност за преглед преди заплащане.',
+    courier: 'Доставките се осъществяват чрез Еконт.',
+    noReturns: 'Моля, имайте предвид, че не се приемат връщания на артикули след получаването им.',
+    emailTerms: 'Начинът на плащане и условията за доставка се уточняват предварително чрез контакт по имейл.',
+};
+
+const enCopy = {
+    eyebrow: 'Terms',
+    title: 'Payment methods',
+    local: 'Within Bulgaria',
+    international: 'International orders',
+    buyerPays: 'The buyer covers the delivery costs.',
+    cod: 'Payment is made by cash on delivery, with inspection before payment where available.',
+    courier: 'Domestic deliveries are handled through Econt.',
+    noReturns: 'Please note that items cannot be returned after they have been received.',
+    emailTerms: 'Payment method and delivery terms for international orders are agreed in advance by email.',
+};
+
+const copy = currentLocale === 'en' ? enCopy : bgCopy;
+---
+
+<Layout title={{ bg: "Начини на плащане", en: "Payment methods" }} description={{ bg: "Информация за начините на плащане при покупка на антики от Antique Shop.", en: "Payment information for antique purchases from Antique Shop." }}>
+  <section class="bg-stone-100 py-16 sm:py-20">
+    <div class="container mx-auto px-4">
+      <div class="mx-auto max-w-3xl">
+        <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">{copy.eyebrow}</span>
+        <h1 class="font-serif text-4xl font-bold text-stone-900 sm:text-5xl">{copy.title}</h1>
+        <div class="mt-8 space-y-5 text-base leading-relaxed text-stone-700">
+          <h1><b>{copy.local}</b></h1>
+          <p>{copy.buyerPays}</p>
+          <p>{copy.cod}</p>
+          <p>{copy.courier}</p>
+          <p>{copy.noReturns}</p>
+          <br>
+          <h1><b>{copy.international}</b></h1>
+          <p>{copy.buyerPays}</p>
+          <p>{copy.emailTerms}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

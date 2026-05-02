@@ -1,19 +1,68 @@
----
-import Layout from '../../layouts/Layout.astro';
-import { categories, getSlug } from '../../utils/categories.js';
-import { getImageSet } from '../../utils/images.js';
+﻿---
+import Layout from '../../../layouts/Layout.astro';
+import { categories, getCategoryDescription, getCategoryName, getSlug, getSubcategoryName } from '../../../utils/categories.js';
+import { getImageSet } from '../../../utils/images.js';
+import { getItemTitle, locales, localizedPath } from '../../../utils/i18n.js';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
 export function getStaticPaths() {
-  return categories.map(category => ({
-    params: { slug: getSlug(category) },
+  return locales.flatMap(locale => categories.map(category => ({
+    params: { locale, slug: getSlug(category) },
     props: { category },
-  }));
+  })));
 }
 
 const { category } = Astro.props;
 const subCategories = category.subcategories || [];
+const currentLocale = Astro.currentLocale || 'bg';
+const categoryName = getCategoryName(category, currentLocale);
+const categoryDescription = getCategoryDescription(category, currentLocale);
+const bgCopy = {
+    home: 'Начало',
+    categories: 'Категории',
+    collection: 'Колекция',
+    subcategories: 'Подкатегории',
+    all: 'Всички',
+    noSubcategories: 'Няма подкатегории',
+    filter: 'Филтрирай',
+    price: 'Цена',
+    min: 'Мин',
+    max: 'Макс',
+    showing: 'Показване на',
+    results: 'резултата',
+    newest: 'Най-нови',
+    priceAsc: 'Цена: възходяща',
+    priceDesc: 'Цена: низходяща',
+    noImage: '[Няма изображение]',
+    viewDetails: 'Виж детайли',
+    noResults: 'Няма намерени предмети в този ценови диапазон.',
+    emptyCategory: 'В момента няма налични предмети в тази категория.',
+};
+
+const enCopy = {
+    home: 'Home',
+    categories: 'Categories',
+    collection: 'Collection',
+    subcategories: 'Subcategories',
+    all: 'All',
+    noSubcategories: 'No subcategories',
+    filter: 'Filter',
+    price: 'Price',
+    min: 'Min',
+    max: 'Max',
+    showing: 'Showing',
+    results: 'results',
+    newest: 'Newest',
+    priceAsc: 'Price: low to high',
+    priceDesc: 'Price: high to low',
+    noImage: '[No image]',
+    viewDetails: 'View details',
+    noResults: 'No pieces found in this price range.',
+    emptyCategory: 'There are currently no available pieces in this category.',
+};
+
+const copy = currentLocale === 'en' ? enCopy : bgCopy;
 
 const allAntiques = await getCollection('antiques');
 const sortByRecentDate = (a: CollectionEntry<'antiques'>, b: CollectionEntry<'antiques'>) => {
@@ -28,20 +77,20 @@ const categoryItems = allAntiques
   .sort(sortByRecentDate);
 ---
 
-<Layout bodyClass="bg-stone-50">
+<Layout bodyClass="bg-stone-50" title={categoryName} description={categoryDescription}>
   <div class="border-b border-stone-200 bg-stone-100 py-10 sm:py-12">
     <div class="container mx-auto px-4">
       <div class="mb-5 flex flex-wrap items-center gap-2 text-sm text-stone-500">
-        <a href="/" class="transition-colors hover:text-amber-700">Начало</a>
+        <a href={localizedPath(currentLocale)} class="transition-colors hover:text-amber-700">{copy.home}</a>
         <span>/</span>
-        <a href="/categories" class="transition-colors hover:text-amber-700">Категории</a>
+        <a href={localizedPath(currentLocale, "/categories")} class="transition-colors hover:text-amber-700">{copy.categories}</a>
         <span>/</span>
-        <span class="font-medium text-stone-800">{category.name}</span>
+        <span class="font-medium text-stone-800">{categoryName}</span>
       </div>
       <div class="max-w-3xl">
-        <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">Колекция</span>
-        <h1 class="font-serif text-4xl font-bold leading-tight text-stone-950 sm:text-5xl">{category.name}</h1>
-        <p class="mt-4 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">{category.description}</p>
+        <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-amber-700">{copy.collection}</span>
+        <h1 class="font-serif text-4xl font-bold leading-tight text-stone-950 sm:text-5xl">{categoryName}</h1>
+        <p class="mt-4 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">{categoryDescription}</p>
       </div>
     </div>
   </div>
@@ -51,37 +100,37 @@ const categoryItems = allAntiques
       <!-- Sidebar / Sub-categories -->
       <aside class="w-full flex-shrink-0 lg:w-64">
         <div class="sticky top-24 rounded border border-stone-200 bg-white p-6">
-          <h2 class="mb-6 border-b border-stone-100 pb-2 font-serif text-lg font-bold text-stone-800">Подкатегории</h2>
+          <h2 class="mb-6 border-b border-stone-100 pb-2 font-serif text-lg font-bold text-stone-800">{copy.subcategories}</h2>
 
           {subCategories.length > 0 ? (
             <ul class="space-y-3" id="subcategory-filters">
               <li>
                 <a href="#" data-subcategory="all" class="subcategory-link flex items-center font-bold text-amber-700 transition-colors group">
                   <span class="mr-3 h-2 w-2 rounded-full bg-amber-700 transition-colors"></span>
-                  Всички
+                  {copy.all}
                 </a>
               </li>
               {subCategories.map(sub => (
                 <li>
                   <a href="#" data-subcategory={sub.name} class="subcategory-link flex items-center text-stone-600 transition-colors hover:text-amber-700 group">
                     <span class="mr-3 h-2 w-2 rounded-full bg-stone-200 transition-colors group-hover:bg-amber-700"></span>
-                    {sub.name}
+                    {getSubcategoryName(category, sub.name, currentLocale)}
                   </a>
                 </li>
               ))}
             </ul>
           ) : (
-            <p class="text-sm italic text-stone-500">Няма подкатегории</p>
+            <p class="text-sm italic text-stone-500">{copy.noSubcategories}</p>
           )}
 
           <div class="mt-10 border-t border-stone-100 pt-8">
-            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-stone-800">Филтрирай</h3>
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-wider text-stone-800">{copy.filter}</h3>
             <div class="space-y-4">
               <div>
-                <label class="mb-2 block text-xs font-bold uppercase text-stone-500">Цена</label>
+                <label class="mb-2 block text-xs font-bold uppercase text-stone-500">{copy.price}</label>
                 <div class="flex gap-2">
-                  <input type="number" id="min-price" placeholder="Мин" class="w-full rounded border border-stone-200 px-2 py-1 text-xs" />
-                  <input type="number" id="max-price" placeholder="Макс" class="w-full rounded border border-stone-200 px-2 py-1 text-xs" />
+                  <input type="number" id="min-price" placeholder={copy.min} class="w-full rounded border border-stone-200 px-2 py-1 text-xs" />
+                  <input type="number" id="max-price" placeholder={copy.max} class="w-full rounded border border-stone-200 px-2 py-1 text-xs" />
                 </div>
               </div>
             </div>
@@ -92,11 +141,11 @@ const categoryItems = allAntiques
       <!-- Items Grid -->
       <div class="min-w-0 flex-grow">
         <div class="mb-8 flex flex-col gap-4 rounded-lg border border-stone-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-          <p class="text-sm text-stone-600">Показване на <span id="results-count" class="font-bold text-stone-900">{categoryItems.length}</span> резултата</p>
+          <p class="text-sm text-stone-600">{copy.showing} <span id="results-count" class="font-bold text-stone-900">{categoryItems.length}</span> {copy.results}</p>
           <select id="sort-by" class="w-full cursor-pointer rounded border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-600 sm:w-auto">
-            <option value="newest">Най-нови</option>
-            <option value="price-asc">Цена: възходяща</option>
-            <option value="price-desc">Цена: низходяща</option>
+            <option value="newest">{copy.newest}</option>
+            <option value="price-asc">{copy.priceAsc}</option>
+            <option value="price-desc">{copy.priceDesc}</option>
           </select>
         </div>
 
@@ -108,38 +157,38 @@ const categoryItems = allAntiques
             const imgSet = getImageSet(optimizedBase);
             return (
               <article class="item-card group overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg shadow-stone-950/5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-600/70 hover:shadow-xl hover:shadow-stone-950/10" data-price={item.data.price} data-subcategory={item.data.subcategory} data-order={index}>
-                <a href={`/antiques/${item.id}`} class="block">
+                <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
                   <div class="relative aspect-[4/5] overflow-hidden bg-stone-200">
                     {item.data.images && item.data.images.length > 0 ? (
                       <img
                         src={imgSet.medium}
                         srcset={`${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w`}
                         sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                        alt={item.data.title}
+                        alt={getItemTitle(item, currentLocale)}
                         class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
                         decoding="async"
                       />
                     ) : (
                       <div class="absolute inset-0 flex items-center justify-center text-stone-400 italic">
-                        [Няма изображение]
+                        {copy.noImage}
                       </div>
                     )}
                     <div class="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-950/5 to-transparent opacity-80"></div>
                     <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
                       <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
-                        Виж детайли
+                        {copy.viewDetails}
                       </span>
                       <span class="h-px flex-1 bg-amber-500/70"></span>
                     </div>
                   </div>
                   <div class="p-5">
-                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">{item.data.subcategory}</p>
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">{getSubcategoryName(category, item.data.subcategory, currentLocale)}</p>
                     <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950 transition-colors group-hover:text-amber-700">
-                      {item.data.title}
+                      {getItemTitle(item, currentLocale)}
                     </h3>
                     <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
-                      <span class="text-sm text-stone-500">Цена</span>
+                      <span class="text-sm text-stone-500">{copy.price}</span>
                       <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
                     </div>
                   </div>
@@ -150,12 +199,12 @@ const categoryItems = allAntiques
         </div>
 
         <div id="no-results" class="hidden rounded-lg border border-dashed border-stone-300 bg-white py-20 text-center">
-          <p class="text-stone-500 italic">Няма намерени предмети в този ценови диапазон.</p>
+          <p class="text-stone-500 italic">{copy.noResults}</p>
         </div>
 
         {categoryItems.length === 0 && (
           <div class="rounded-lg border border-dashed border-stone-300 bg-white py-20 text-center">
-            <p class="text-stone-500 italic">В момента няма налични предмети в тази категория.</p>
+            <p class="text-stone-500 italic">{copy.emptyCategory}</p>
           </div>
         )}
 
@@ -251,3 +300,4 @@ const categoryItems = allAntiques
   document.getElementById('max-price')?.addEventListener('input', filterAndSort);
   document.getElementById('sort-by')?.addEventListener('change', filterAndSort);
 </script>
+

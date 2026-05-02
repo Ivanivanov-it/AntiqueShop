@@ -1,0 +1,158 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import { localizedPath, staticLocalePaths } from '../../utils/i18n.js';
+
+export function getStaticPaths() {
+  return staticLocalePaths();
+}
+
+const currentLocale = Astro.currentLocale || 'bg';
+const bgCopy = {
+    title: 'Свържете се с нас',
+    intro: 'Имате въпрос относно артикул от колекцията или желаете да предложите предмет за оценка? Очакваме вашето запитване.',
+    name: 'Пълно име',
+    namePlaceholder: 'Иван Иванов',
+    email: 'Email адрес',
+    subject: 'Тема',
+    general: 'Общо запитване',
+    buy: 'Запитване за покупка',
+    appraisal: 'Оценка на предмет',
+    sourcing: 'Издирване на конкретен предмет',
+    collection: 'Информация за колекция',
+    message: 'Вашето съобщение',
+    messagePlaceholder: 'Как можем да ви помогнем?',
+    send: 'Изпрати съобщение',
+    info: 'Информация за контакт',
+    location: 'Нашето местоположение',
+    address: 'Varna CenterOdesos, бул. „Княгиня Мария Луиза“ 5А, 9000 Varna',
+    contact: 'Свържете се с нас',
+    phone: 'Телефон',
+    hours: 'Работно време',
+    weekdays: 'Понеделник - Петък:',
+    weekend: 'Събота-Неделя:',
+    closed: 'Затворено',
+};
+
+const enCopy = {
+    title: 'Contact us',
+    intro: 'Have a question about a piece from the collection, or would you like to offer an object for appraisal? Send us your inquiry.',
+    name: 'Full name',
+    namePlaceholder: 'Ivan Ivanov',
+    email: 'Email address',
+    subject: 'Subject',
+    general: 'General inquiry',
+    buy: 'Purchase inquiry',
+    appraisal: 'Object appraisal',
+    sourcing: 'Help finding a specific piece',
+    collection: 'Collection information',
+    message: 'Your message',
+    messagePlaceholder: 'How can we help?',
+    send: 'Send message',
+    info: 'Contact information',
+    location: 'Our location',
+    address: 'Varna Center Odesos, Knyaginya Maria Luiza Blvd. 5A, 9000 Varna, Bulgaria',
+    contact: 'Contact us',
+    phone: 'Phone',
+    hours: 'Opening hours',
+    weekdays: 'Monday - Friday:',
+    weekend: 'Saturday-Sunday:',
+    closed: 'Closed',
+};
+
+const copy = currentLocale === 'en' ? enCopy : bgCopy;
+---
+
+<Layout title={{ bg: "Контакти", en: "Contact" }} description={{ bg: "Свържете се с Antique Shop за въпроси относно антики, запитвания за покупка и оценка на предмети.", en: "Contact Antique Shop for questions about antiques, purchase inquiries, and object appraisals." }}>
+  <div class="py-16 bg-stone-100 border-b border-stone-200">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl font-serif font-bold text-stone-800 mb-2">{copy.title}</h1>
+      <p class="text-stone-600">{copy.intro}</p>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-20">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-16">
+      <div class="lg:col-span-2">
+        <h2 class="text-2xl font-serif font-bold text-stone-800 mb-8">{copy.title}</h2>
+        <form action="https://formsubmit.co/antiqueshop.berlin@gmail.com" method="POST" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">{copy.name}</label>
+              <input name="name" type="text" placeholder={copy.namePlaceholder} required class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-stone-700 mb-2">{copy.email}</label>
+              <input name="email" type="email" placeholder="Ivan@example.com" required class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-2">{copy.subject}</label>
+            <select name="subject" class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500">
+              <option value="General Inquiry">{copy.general}</option>
+              <option value="Buy Inquiry">{copy.buy}</option>
+              <option value="Rate Request">{copy.appraisal}</option>
+              <option value="Sourcing Help">{copy.sourcing}</option>
+              <option value="Collection Info">{copy.collection}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-2">{copy.message}</label>
+            <textarea name="message" rows="6" placeholder={copy.messagePlaceholder} required class="w-full bg-white border border-stone-200 px-4 py-3 rounded focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"></textarea>
+          </div>
+          
+          <input type="hidden" name="_subject" value="New message from Antique Shop Website!">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" id="next-page" value="">
+          <button type="submit" class="bg-amber-700 text-white px-8 py-4 rounded font-bold hover:bg-amber-800 transition-colors shadow-lg">
+            {copy.send}
+          </button>
+        </form>
+      </div>
+
+      <div class="bg-stone-50 p-10 border border-stone-200 rounded-lg shadow-sm">
+        <h2 class="text-2xl font-serif font-bold text-stone-800 mb-8 text-center">{copy.info}</h2>
+        <div class="space-y-10">
+          <div>
+            <p class="text-amber-700 font-bold uppercase tracking-widest text-xs mb-3">{copy.location}</p>
+            <p class="text-stone-800 font-medium">{copy.address}<br/></p>
+          </div>
+          <div>
+            <p class="text-amber-700 font-bold uppercase tracking-widest text-xs mb-3">{copy.contact}</p>
+            <p class="text-stone-800 font-medium">Email: antiqueshop.berlin@gmail.com <br/> msivanova_76@abv.bg</p>
+            <p class="text-stone-800 font-medium">{copy.phone}: +359 895361505</p>
+          </div>
+          <div>
+            <p class="text-amber-700 font-bold uppercase tracking-widest text-xs mb-3">{copy.hours}</p>
+            <ul class="space-y-1 text-sm text-stone-700">
+              <li class="flex justify-between"><span>{copy.weekdays}</span> <span>10:00 - 16:00</span></li>
+              <li class="flex justify-between font-bold text-stone-400"><span>{copy.weekend}</span> <span>{copy.closed}</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="w-full bg-stone-200 border-t border-stone-200">
+    <div class="relative w-full h-0 pb-[56.25%] md:pb-[400px] lg:pb-[500px] overflow-hidden">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2908.196252389788!2d27.911704399999998!3d43.20537289999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40a4531f48c95109%3A0x47a766969c62a730!2z0JDQvdGC0LjQutCy0LDRgNC10L0g0LzQsNCz0LDQt9C40L0g0JHQtdGA0LvQuNC9!5e0!3m2!1sen!2sbg!4v1776520506745!5m2!1sen!2sbg" 
+        class="absolute top-0 left-0 w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-500 grayscale-[0.5]" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  
+  const nextInput = document.getElementById('next-page') as HTMLInputElement;
+  if (nextInput) {
+    nextInput.value = window.location.origin + `/${document.documentElement.lang || 'bg'}/thank-you`;
+  }
+</script>
+
+

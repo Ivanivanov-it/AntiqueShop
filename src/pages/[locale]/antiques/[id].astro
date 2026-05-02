@@ -1,15 +1,16 @@
----
-import Layout from '../../layouts/Layout.astro';
+﻿---
+import Layout from '../../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
-import { categories, getSlug } from '../../utils/categories.js';
-import { getImageSet } from '../../utils/images.js';
+import { categories, getCategoryName, getSlug, getSubcategoryName } from '../../../utils/categories.js';
+import { getImageSet } from '../../../utils/images.js';
+import { getItemDescription, getItemTitle, locales, localizedPath } from '../../../utils/i18n.js';
 
 export async function getStaticPaths() {
   const allAntiques = await getCollection('antiques');
-  return allAntiques.map(item => ({
-    params: { id: item.id },
+  return locales.flatMap(locale => allAntiques.map(item => ({
+    params: { locale, id: item.id },
     props: { item },
-  }));
+  })));
 }
 
 const { item } = Astro.props;
@@ -24,19 +25,59 @@ const imageSets = images.map(img => {
 
 const category = categories.find(c => c.name === data.category);
 const categorySlug = category ? getSlug(category) : 'all';
+const currentLocale = Astro.currentLocale || 'bg';
+const categoryName = category ? getCategoryName(category, currentLocale) : data.category;
+const subcategoryName = getSubcategoryName(category, data.subcategory, currentLocale);
+const itemTitle = getItemTitle(item, currentLocale);
+const itemDescription = getItemDescription(item, currentLocale);
+const bgCopy = {
+    home: 'Начало',
+    categories: 'Категории',
+    showImage: 'Покажи снимка',
+    new: 'Ново',
+    featured: 'Препоръчано',
+    sold: 'Продадено',
+    category: 'Категория',
+    subcategory: 'Подкатегория',
+    availability: 'Наличност',
+    available: 'Налично',
+    description: 'Описание',
+    inquiry: 'Запитване за продукта',
+    inquirySubject: 'Запитване за',
+    details: 'Подробности за продукта',
+};
+
+const enCopy = {
+    home: 'Home',
+    categories: 'Categories',
+    showImage: 'Show image',
+    new: 'New',
+    featured: 'Featured',
+    sold: 'Sold',
+    category: 'Category',
+    subcategory: 'Subcategory',
+    availability: 'Availability',
+    available: 'Available',
+    description: 'Description',
+    inquiry: 'Ask about this piece',
+    inquirySubject: 'Inquiry about',
+    details: 'Object details',
+};
+
+const copy = currentLocale === 'en' ? enCopy : bgCopy;
 ---
 
-<Layout bodyClass="bg-stone-50">
+<Layout bodyClass="bg-stone-50" title={itemTitle} description={itemDescription}>
   <section class="border-b border-stone-200 bg-stone-100 py-6">
     <div class="container mx-auto px-4">
       <nav class="flex flex-wrap items-center gap-2 text-sm text-stone-500" aria-label="Breadcrumb">
-        <a href="/" class="transition-colors hover:text-amber-700">Начало</a>
+        <a href={localizedPath(currentLocale)} class="transition-colors hover:text-amber-700">{copy.home}</a>
         <span>/</span>
-        <a href="/categories" class="transition-colors hover:text-amber-700">Категории</a>
+        <a href={localizedPath(currentLocale, "/categories")} class="transition-colors hover:text-amber-700">{copy.categories}</a>
         <span>/</span>
-        <a href={`/categories/${categorySlug}`} class="transition-colors hover:text-amber-700">{data.category}</a>
+        <a href={localizedPath(currentLocale, `/categories/${categorySlug}`)} class="transition-colors hover:text-amber-700">{categoryName}</a>
         <span>/</span>
-        <span class="font-medium text-stone-800">{data.title}</span>
+        <span class="font-medium text-stone-800">{itemTitle}</span>
       </nav>
     </div>
   </section>
@@ -49,7 +90,7 @@ const categorySlug = category ? getSlug(category) : 'all';
             src={imageSets[0].medium}
             srcset={`${imageSets[0].small} 400w, ${imageSets[0].medium} 800w, ${imageSets[0].large} 1200w`}
             sizes="(max-width: 1024px) 100vw, 56vw"
-            alt={data.title}
+            alt={itemTitle}
             class="h-full w-full object-contain p-4 transition-transform duration-300 sm:p-6"
             id="main-image"
             data-zoom-image
@@ -64,10 +105,10 @@ const categorySlug = category ? getSlug(category) : 'all';
               <button
                 type="button"
                 class="aspect-square overflow-hidden rounded border border-stone-200 bg-white p-1 shadow-sm transition-colors hover:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                aria-label={`Покажи снимка ${index + 1}`}
+                aria-label={`${copy.showImage} ${index + 1}`}
                 onclick={`const main = document.getElementById('main-image'); main.src='${imgSet.medium}'; main.srcset='${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w';`}
               >
-                <img src={imgSet.small} alt={`${data.title} - ${index + 1}`} class="h-full w-full object-cover" loading="lazy" decoding="async" />
+                <img src={imgSet.small} alt={`${itemTitle} - ${index + 1}`} class="h-full w-full object-cover" loading="lazy" decoding="async" />
               </button>
             ))}
           </div>
@@ -79,61 +120,61 @@ const categorySlug = category ? getSlug(category) : 'all';
           <div class="mb-5 flex flex-wrap gap-2">
             {data.subcategory && (
               <span class="rounded bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-amber-900">
-                {data.subcategory}
+                {subcategoryName}
               </span>
             )}
 
             {data.new && (
               <span class="rounded bg-stone-900 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
-                Ново
+                {copy.new}
               </span>
             )}
 
             {data.featured && (
               <span class="rounded bg-[#D4AF37] px-3 py-1 text-xs font-bold uppercase tracking-wide text-stone-950">
-                Препоръчано
+                {copy.featured}
               </span>
             )}
 
             {data.available === false && (
               <span class="rounded bg-red-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-red-800">
-                Продадено
+                {copy.sold}
               </span>
             )}
           </div>
 
-          <h1 class="font-serif text-3xl font-bold leading-tight text-stone-950 sm:text-4xl lg:text-5xl">{data.title}</h1>
+          <h1 class="font-serif text-3xl font-bold leading-tight text-stone-950 sm:text-4xl lg:text-5xl">{itemTitle}</h1>
           <p class="mt-5 font-serif text-3xl font-bold text-[#8a6a24]">€{data.price?.toLocaleString()}</p>
 
           <div class="mt-8 grid gap-3 border-y border-stone-200 py-5 text-sm text-stone-600 sm:grid-cols-2">
             <div>
-              <span class="block font-semibold text-stone-900">Категория</span>
-              {data.category}
+              <span class="block font-semibold text-stone-900">{copy.category}</span>
+              {categoryName}
             </div>
             {data.subcategory && (
               <div>
-                <span class="block font-semibold text-stone-900">Подкатегория</span>
-                {data.subcategory}
+                <span class="block font-semibold text-stone-900">{copy.subcategory}</span>
+                {subcategoryName}
               </div>
             )}
             <div>
-              <span class="block font-semibold text-stone-900">Наличност</span>
-              {data.available === false ? 'Продадено' : 'Налично'}
+              <span class="block font-semibold text-stone-900">{copy.availability}</span>
+              {data.available === false ? copy.sold : copy.available}
             </div>
           </div>
 
           <div class="mt-7">
-            <h2 class="font-serif text-xl font-bold text-stone-950">Описание</h2>
+            <h2 class="font-serif text-xl font-bold text-stone-950">{copy.description}</h2>
             <p class="mt-3 border-l-4 border-amber-600/50 pl-4 text-base leading-relaxed text-stone-600">
-              {data.description}
+              {itemDescription}
             </p>
           </div>
 
           <a
-            href={`/contact?subject=Запитване за: ${encodeURIComponent(data.title)}`}
+            href={`${localizedPath(currentLocale, "/contact")}?subject=${copy.inquirySubject}: ${encodeURIComponent(itemTitle)}`}
             class="mt-8 inline-flex w-full justify-center rounded bg-stone-900 px-6 py-4 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-stone-950/15 transition-colors hover:bg-[#8a6a24]"
           >
-            Запитване за продукта
+            {copy.inquiry}
           </a>
         </div>
       </aside>
@@ -144,7 +185,7 @@ const categorySlug = category ? getSlug(category) : 'all';
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        Подробности за продукта
+        {copy.details}
       </h2>
       <div class="content-render text-stone-700">
         <Content />
@@ -190,3 +231,4 @@ const categorySlug = category ? getSlug(category) : 'all';
     margin-bottom: 0.75rem;
   }
 </style>
+

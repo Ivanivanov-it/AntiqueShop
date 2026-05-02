@@ -1,0 +1,106 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import { localizedPath, staticLocalePaths } from '../../utils/i18n.js';
+
+export function getStaticPaths() {
+  return staticLocalePaths();
+}
+
+const currentLocale = Astro.currentLocale || 'bg';
+const bgCopy = {
+    title: 'Нашата история и наследство',
+    intro: 'Запазване на историята, парче по парче. Ние снабдяваме най-уникалните съкровища от света вече повече от три десетилетия.',
+    sectionTitle: 'Страст към безвременността',
+    p1: 'Нашето пътуване започна в малка работилница през 1985 г. Вдъхновени от страстта си към историческото занаятчийство, ние се развихме в водеща дестинация за антикварни ентусиасти и колекционери по целия свят.',
+    p2: 'Всеки артикул в нашата колекция е ръчно подбран за своето качество, история и характер. Вярваме, че антиките не са просто предмети; те са разказвачи на истории, които свързват поколенията.',
+    quote: 'Антиките са единствените предмети, които стават по-красиви и по-ценни с времето. Те са истинският устойчив избор за съвременния дом.',
+    image: '[Image: Vintage Workshop Interior]',
+    years: 'Години опит',
+    curated: 'Курирано качество',
+    curatedText: 'Строго инспектирано и удостоверено от нашия екип от експерти.',
+    sourcing: 'Глобално снабдяване',
+    sourcingText: 'Снабдяване на уникални произведения от Европа, Азия и Америка.',
+    personal: 'Личен подход',
+    personalText: 'Индивидуално снабдяване и възстановяване на произведения за взискателни клиенти.',
+};
+
+const enCopy = {
+    title: 'Our Story and Heritage',
+    intro: 'Preserving history, one piece at a time. For more than three decades, we have sourced distinctive treasures with lasting character.',
+    sectionTitle: 'A Passion for the Timeless',
+    p1: 'Our journey began in a small workshop in 1985. Inspired by historical craftsmanship, we grew into a trusted destination for antique enthusiasts and collectors.',
+    p2: 'Every piece in our collection is selected by hand for quality, history, and character. We believe antiques are not just objects; they are storytellers that connect generations.',
+    quote: 'Antiques are among the few objects that become more beautiful and meaningful with time. They are a lasting choice for the contemporary home.',
+    image: '[Image: Vintage Workshop Interior]',
+    years: 'Years of experience',
+    curated: 'Curated quality',
+    curatedText: 'Carefully inspected and considered by our team.',
+    sourcing: 'Thoughtful sourcing',
+    sourcingText: 'Finding distinctive pieces from Bulgaria, Europe, and beyond.',
+    personal: 'Personal approach',
+    personalText: 'Individual guidance for discerning clients, collectors, and interiors.',
+};
+
+const copy = currentLocale === 'en' ? enCopy : bgCopy;
+---
+
+<Layout title={{ bg: "За нас", en: "About" }} description={{ bg: "Научете повече за историята, опита и подхода на Antique Shop към подбора на автентични антики.", en: "Learn more about Antique Shop, our experience, and our approach to selecting authentic antiques." }}>
+  <div class="py-20 bg-stone-100 border-b border-stone-200">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-5xl font-serif font-bold text-stone-800 mb-6">{copy.title}</h1>
+      <p class="text-xl text-stone-600 max-w-2xl mx-auto leading-relaxed">
+        {copy.intro}
+      </p>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+      <div>
+        <h2 class="text-3xl font-serif font-bold text-stone-800 mb-6">{copy.sectionTitle}</h2>
+        <p class="text-stone-600 mb-4 text-lg">
+          {copy.p1}
+        </p>
+        <p class="text-stone-600 mb-6">
+          {copy.p2}
+        </p>
+        <div class="border-l-4 border-amber-700 pl-6 italic text-stone-700 text-lg py-2">
+          "{copy.quote}"
+        </div>
+      </div>
+      <div class="relative">
+        <div class="aspect-square bg-stone-300 rounded-lg overflow-hidden shadow-2xl flex items-center justify-center text-stone-500 italic">
+          {copy.image}
+        </div>
+        <div class="absolute -bottom-6 -left-6 bg-amber-700 text-white p-8 rounded shadow-xl hidden md:block">
+          <p class="text-3xl font-bold">35+</p>
+          <p class="text-sm uppercase tracking-widest">{copy.years}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-stone-900 text-white py-20">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+        <div>
+          <div class="text-amber-500 mb-4 text-4xl">★</div>
+          <h3 class="text-xl font-bold mb-2">{copy.curated}</h3>
+          <p class="text-stone-400">{copy.curatedText}</p>
+        </div>
+        <div>
+          <div class="text-amber-500 mb-4 text-4xl">⟳</div>
+          <h3 class="text-xl font-bold mb-2">{copy.sourcing}</h3>
+          <p class="text-stone-400">{copy.sourcingText}</p>
+        </div>
+        <div>
+          <div class="text-amber-500 mb-4 text-4xl">♥</div>
+          <h3 class="text-xl font-bold mb-2">{copy.personal}</h3>
+          <p class="text-stone-400">{copy.personalText}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+
