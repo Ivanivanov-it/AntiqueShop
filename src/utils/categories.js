@@ -10,21 +10,21 @@ export const categories = [
       { slug: 'nastolni-chasovnici', name: 'Настолни часовници' },
       { slug: 'drugi', name: 'Други' }
     ],
-    image: '/images/categories/category-watches.webp'
+    image: '/images/categories/category-watches-bright.webp'
   },
   { 
     slug: 'porcelan', 
     name: 'Порцелан', 
     description: 'Керамика и порцелан.',
     subcategories: [],
-    image: '/images/categories/category-porcelain.webp'
+    image: '/images/categories/category-porcelain-bright.webp'
   },
   { 
     slug: 'starinni-bizhuta', 
     name: 'Старинни бижута', 
     description: 'Етнографски накити и страринни бижута.',
     subcategories: [],
-    image: '/images/categories/category-jewelry.webp'
+    image: '/images/categories/category-jewelry-bright.webp'
   },
   { 
     slug: 'izobrazitelno-izkustvo', 
@@ -49,7 +49,7 @@ export const categories = [
       { slug: 'detski-igrachki', name: 'Детски играчки' },
       { slug: 'drugi', name: 'Други' }
     ],
-    image: '/images/categories/category-collections.webp'
+    image: '/images/categories/category-collections-bright.webp'
   },
   { 
     slug: 'etnika-i-folklor', 
@@ -67,7 +67,7 @@ export const categories = [
     name: 'Сувенири и Подараци', 
     description: 'Сувенири и подаръци с антикварна стойност.',
     subcategories: [],
-    image: '/images/categories/category-gifts.webp'
+    image: '/images/categories/category-gifts-bright.webp'
   },
   { 
     slug: 'knigi', 
