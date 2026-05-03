@@ -4,7 +4,7 @@ description: "Старинен Швейцарски джобен часовни�
   работи. Произведен около1920 г. "
 category: Антикварни часовници
 subcategory: Джобни часовници
-price: 600
+price: 180
 featured: true
 available: true
 new: true
