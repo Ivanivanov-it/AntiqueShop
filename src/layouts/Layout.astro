@@ -4,9 +4,12 @@ import { categories, getCategoryDescription, getCategoryName, getSlug } from "..
 import { locales, localizedPath, switchLocalePath, t } from "../utils/i18n.js";
 
 const { bodyClass = "bg-stone-50", title, description } = Astro.props;
-const currentLocale = Astro.currentLocale || "bg";
+type Locale = "bg" | "en";
+type LocalizedProp = string | Partial<Record<Locale, string>> | undefined;
+
+const currentLocale: Locale = Astro.currentLocale === "en" ? "en" : "bg";
 const content = t(currentLocale);
-const localizeProp = (value) => typeof value === "object" && value !== null ? value[currentLocale] || value.bg : value;
+const localizeProp = (value: LocalizedProp) => typeof value === "object" && value !== null ? value[currentLocale] || value.bg : value;
 const currentPath = Astro.url.pathname;
 const currentPathWithoutLocale = currentPath.replace(/^\/(bg|en)(?=\/|$)/, "") || "/";
 const localizedTitle = localizeProp(title);
@@ -42,14 +45,20 @@ const footer = content.footer;
 			<nav class="container mx-auto flex flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between lg:py-5">
 				<a href={localizedPath(currentLocale)} class="flex justify-center sm:justify-start"><img src="/images/AntiqueShopLogo.png" alt="Antique Shop" class="h-16 w-auto sm:h-20 lg:h-24" /></a>
 				<ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-sm font-semibold uppercase tracking-wide text-stone-800 sm:justify-end sm:text-base sm:normal-case sm:tracking-normal">
-					<li class="group relative w-full sm:w-auto">
-						<a href={localizedPath(currentLocale, "/categories")} class="inline-flex w-full items-center justify-center gap-1.5 py-2 hover:text-amber-700 transition-colors sm:w-auto" aria-haspopup="true">
+					<li class="group relative w-full sm:w-auto" data-category-nav>
+						<button type="button" class="inline-flex w-full items-center justify-center gap-1.5 py-2 transition-colors hover:text-amber-700 sm:hidden" aria-haspopup="true" aria-expanded="false" aria-controls="category-menu" data-category-toggle>
+							{nav.categories}
+							<svg class="h-3.5 w-3.5 transition-transform" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-category-icon>
+								<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+							</svg>
+						</button>
+						<a href={localizedPath(currentLocale, "/categories")} class="hidden w-full items-center justify-center gap-1.5 py-2 hover:text-amber-700 transition-colors sm:inline-flex sm:w-auto" aria-haspopup="true">
 							{nav.categories}
 							<svg class="h-3.5 w-3.5 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 								<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.17l3.71-3.94a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
 							</svg>
 						</a>
-						<div class="z-50 hidden w-full opacity-0 transition duration-150 group-hover:block group-hover:opacity-100 group-focus-within:block group-focus-within:opacity-100 sm:invisible sm:absolute sm:left-1/2 sm:top-full sm:block sm:w-[min(92vw,54rem)] sm:-translate-x-1/2 sm:pt-3 sm:group-hover:visible sm:group-focus-within:visible">
+						<div id="category-menu" class="z-50 hidden w-full opacity-0 transition duration-150 sm:invisible sm:absolute sm:left-1/2 sm:top-full sm:block sm:w-[min(92vw,54rem)] sm:-translate-x-1/2 sm:pt-3 sm:group-hover:visible sm:group-hover:opacity-100 sm:group-focus-within:visible sm:group-focus-within:opacity-100" data-category-menu>
 							<div class="overflow-hidden rounded-lg border border-stone-200 bg-white text-left normal-case tracking-normal shadow-xl ring-1 ring-black/5 sm:shadow-2xl">
 								<div class="flex items-center justify-between gap-4 border-b border-stone-100 bg-stone-50 px-4 py-3 sm:px-5 sm:py-4">
 									<span class="text-xs font-bold uppercase tracking-[0.18em] text-stone-500">{nav.categories}</span>
@@ -157,6 +166,38 @@ const footer = content.footer;
     }
   });
 </script>
+		<script>
+			const categoryNav = document.querySelector("[data-category-nav]");
+			const categoryToggle = categoryNav?.querySelector("[data-category-toggle]");
+			const categoryMenu = categoryNav?.querySelector("[data-category-menu]");
+			const categoryIcon = categoryNav?.querySelector("[data-category-icon]");
+
+			if (categoryNav instanceof HTMLElement && categoryToggle instanceof HTMLButtonElement && categoryMenu instanceof HTMLElement) {
+				const setCategoryMenuOpen = (isOpen) => {
+					categoryToggle.setAttribute("aria-expanded", String(isOpen));
+					categoryMenu.classList.toggle("hidden", !isOpen);
+					categoryMenu.classList.toggle("opacity-0", !isOpen);
+					categoryMenu.classList.toggle("opacity-100", isOpen);
+					categoryIcon?.classList.toggle("rotate-180", isOpen);
+				};
+
+				categoryToggle.addEventListener("click", () => {
+					setCategoryMenuOpen(categoryToggle.getAttribute("aria-expanded") !== "true");
+				});
+
+				document.addEventListener("click", (event) => {
+					if (!categoryNav.contains(event.target instanceof Node ? event.target : null)) {
+						setCategoryMenuOpen(false);
+					}
+				});
+
+				document.addEventListener("keydown", (event) => {
+					if (event.key === "Escape") {
+						setCategoryMenuOpen(false);
+					}
+				});
+			}
+		</script>
 	</body>
 </html>
 
