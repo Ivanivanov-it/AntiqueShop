@@ -17,11 +17,12 @@ const { item } = Astro.props;
 const { data } = item;
 const { Content } = await render(item);
 
-const images = (data.images || []).map(img => typeof img === 'string' ? img : img.url).reverse();
-const imageSets = images.map(img => {
-  const optimizedBase = img.replace('/uploads/', '/optimized/');
+const imageItems = (data.images || []).map(img => typeof img === 'string' ? { url: img, caption: '' } : { url: img.url, caption: img.caption || '' }).reverse();
+const imageSets = imageItems.map(({ url }) => {
+  const optimizedBase = url.replace('/uploads/', '/optimized/');
   return getImageSet(optimizedBase);
 });
+const primaryCaption = imageItems[0]?.caption?.trim() || '';
 
 const category = categories.find(c => c.name === data.category);
 const categorySlug = category ? getSlug(category) : 'all';
@@ -85,19 +86,24 @@ const copy = currentLocale === 'en' ? enCopy : bgCopy;
   <section class="container mx-auto px-4 py-10 sm:py-14 lg:py-20">
     <div class="grid gap-10 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.92fr)] lg:gap-14 xl:gap-20">
       <div class="space-y-5">
-        <div class="relative flex aspect-square cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-stone-200 bg-white shadow-xl shadow-stone-950/10" data-zoom-frame>
-          <img
-            src={imageSets[0].medium}
-            srcset={`${imageSets[0].small} 400w, ${imageSets[0].medium} 800w, ${imageSets[0].large} 1200w`}
-            sizes="(max-width: 1024px) 100vw, 56vw"
-            alt={itemTitle}
-            class="h-full w-full object-contain p-4 transition-transform duration-300 sm:p-6"
-            id="main-image"
-            data-zoom-image
-            decoding="async"
-            fetchpriority="high"
-          />
-        </div>
+        <figure class="overflow-hidden rounded-lg border border-stone-200 bg-white shadow-xl shadow-stone-950/10">
+          <div class="relative flex aspect-square cursor-zoom-in items-center justify-center overflow-hidden" data-zoom-frame>
+            <img
+              src={imageSets[0].medium}
+              srcset={`${imageSets[0].small} 400w, ${imageSets[0].medium} 800w, ${imageSets[0].large} 1200w`}
+              sizes="(max-width: 1024px) 100vw, 56vw"
+              alt={itemTitle}
+              class="h-full w-full object-contain p-4 transition-transform duration-300 sm:p-6"
+              id="main-image"
+              data-zoom-image
+              decoding="async"
+              fetchpriority="high"
+            />
+          </div>
+          <figcaption id="main-caption" class={`border-t border-stone-100 bg-stone-50 px-4 py-3 text-center text-sm italic leading-relaxed text-stone-600 sm:px-6 ${primaryCaption ? '' : 'hidden'}`}>
+            {primaryCaption}
+          </figcaption>
+        </figure>
 
         {imageSets.length > 1 && (
           <div class="grid grid-cols-4 gap-3 sm:grid-cols-5 lg:grid-cols-6">
@@ -106,7 +112,9 @@ const copy = currentLocale === 'en' ? enCopy : bgCopy;
                 type="button"
                 class="aspect-square overflow-hidden rounded border border-stone-200 bg-white p-1 shadow-sm transition-colors hover:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 aria-label={`${copy.showImage} ${index + 1}`}
-                onclick={`const main = document.getElementById('main-image'); main.src='${imgSet.medium}'; main.srcset='${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w';`}
+                data-image-medium={imgSet.medium}
+                data-image-srcset={`${imgSet.small} 400w, ${imgSet.medium} 800w, ${imgSet.large} 1200w`}
+                data-image-caption={imageItems[index].caption?.trim() || ''}
               >
                 <img src={imgSet.small} alt={`${itemTitle} - ${index + 1}`} class="h-full w-full object-cover" loading="lazy" decoding="async" />
               </button>
@@ -196,6 +204,27 @@ const copy = currentLocale === 'en' ? enCopy : bgCopy;
   <script>
     const zoomFrame = document.querySelector<HTMLElement>('[data-zoom-frame]');
     const zoomImage = document.querySelector<HTMLImageElement>('[data-zoom-image]');
+    const mainImage = document.querySelector<HTMLImageElement>('#main-image');
+    const mainCaption = document.querySelector<HTMLElement>('#main-caption');
+    const thumbnailButtons = document.querySelectorAll<HTMLButtonElement>('[data-image-medium]');
+
+    thumbnailButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const imageUrl = button.dataset.imageMedium;
+        const imageSrcset = button.dataset.imageSrcset;
+        const imageCaption = button.dataset.imageCaption || '';
+
+        if (mainImage && imageUrl && imageSrcset) {
+          mainImage.src = imageUrl;
+          mainImage.srcset = imageSrcset;
+        }
+
+        if (mainCaption) {
+          mainCaption.textContent = imageCaption;
+          mainCaption.classList.toggle('hidden', imageCaption.length === 0);
+        }
+      });
+    });
 
     if (zoomFrame && zoomImage) {
       zoomFrame.addEventListener('mousemove', (event: MouseEvent) => {

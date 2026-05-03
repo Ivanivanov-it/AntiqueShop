@@ -28,6 +28,7 @@ const featuredItems = allAntiques
   .slice(0, 4);
 
 const newestItems = allAntiques
+  .filter((item) => item.data.new === true)
   .sort(sortByRecentDate)
   .slice(0, 4);
 

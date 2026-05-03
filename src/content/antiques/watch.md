@@ -10,11 +10,11 @@ new: false
 views: 0
 images:
   - url: "/images/uploads/watch3.jpg"
-    caption: ""
+    caption: "this is a test"
   - url: "/images/uploads/watch1.webp"
-    caption: ""
+    caption: "test 123"
   - url: "/images/uploads/watch2.jpg"
-    caption: ""
+    caption: "hello hello lol"
   - url: "/images/uploads/watch4.jpg"
-    caption: ""
+    caption: "xdd testing still"
 ---
