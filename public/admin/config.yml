@@ -4,7 +4,10 @@ backend:
   name: git-gateway
   branch: main
  
-local_backend: true
+local_backend: 
+  url: http://192.168.0.237:8081/api/v1
+  allowed_hosts:
+    - 192.168.0.237
 
 publish_mode: editorial_workflow
 
