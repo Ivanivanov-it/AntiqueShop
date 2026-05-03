@@ -32,6 +32,7 @@ const bgCopy = {
     showing: 'Показване на',
     results: 'резултата',
     newest: 'Най-нови',
+    featured: 'Препоръчани',
     priceAsc: 'Цена: възходяща',
     priceDesc: 'Цена: низходяща',
     noImage: '[Няма изображение]',
@@ -54,6 +55,7 @@ const enCopy = {
     showing: 'Showing',
     results: 'results',
     newest: 'Newest',
+    featured: 'Featured',
     priceAsc: 'Price: low to high',
     priceDesc: 'Price: high to low',
     noImage: '[No image]',
@@ -144,6 +146,7 @@ const categoryItems = allAntiques
           <p class="text-sm text-stone-600">{copy.showing} <span id="results-count" class="font-bold text-stone-900">{categoryItems.length}</span> {copy.results}</p>
           <select id="sort-by" class="w-full cursor-pointer rounded border border-stone-200 bg-stone-50 px-3 py-2 text-sm font-medium text-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-600 sm:w-auto">
             <option value="newest">{copy.newest}</option>
+            <option value="featured">{copy.featured}</option>
             <option value="price-asc">{copy.priceAsc}</option>
             <option value="price-desc">{copy.priceDesc}</option>
           </select>
@@ -156,7 +159,7 @@ const categoryItems = allAntiques
             const optimizedBase = firstImageUrl.replace('/uploads/', '/optimized/');
             const imgSet = getImageSet(optimizedBase);
             return (
-              <article class="item-card group overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg shadow-stone-950/5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-600/70 hover:shadow-xl hover:shadow-stone-950/10" data-price={item.data.price} data-subcategory={item.data.subcategory} data-order={index}>
+              <article class="item-card group overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg shadow-stone-950/5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-600/70 hover:shadow-xl hover:shadow-stone-950/10" data-price={item.data.price} data-subcategory={item.data.subcategory} data-featured={item.data.featured === true ? 'true' : 'false'} data-order={index}>
                 <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
                   <div class="relative aspect-[4/5] overflow-hidden bg-stone-200">
                     {item.data.images && item.data.images.length > 0 ? (
@@ -208,13 +211,7 @@ const categoryItems = allAntiques
           </div>
         )}
 
-        {categoryItems.length > 12 && (
-          <div id="pagination" class="mt-16 flex justify-center gap-2">
-            <button class="flex h-10 w-10 items-center justify-center rounded border border-amber-700 bg-amber-700 font-bold text-white">1</button>
-            <button class="flex h-10 w-10 items-center justify-center rounded border border-stone-200 text-stone-600 transition-colors hover:border-amber-700 hover:text-amber-700">2</button>
-            <span class="flex items-center px-2">...</span>
-          </div>
-        )}
+        <nav id="pagination" class="mt-16 hidden flex-wrap justify-center gap-2" aria-label="Pagination"></nav>
       </div>
     </div>
   </div>
@@ -222,8 +219,47 @@ const categoryItems = allAntiques
 
 <script>
   let activeSubcategory = 'all';
+  let currentPage = 1;
+  const itemsPerPage = 9;
 
-  function filterAndSort() {
+  function renderPagination(totalItems: number) {
+    const pagination = document.getElementById('pagination');
+    if (!pagination) return;
+
+    const pageCount = Math.ceil(totalItems / itemsPerPage);
+    pagination.innerHTML = '';
+
+    if (pageCount <= 1) {
+      pagination.classList.add('hidden');
+      pagination.classList.remove('flex');
+      return;
+    }
+
+    pagination.classList.remove('hidden');
+    pagination.classList.add('flex');
+
+    for (let page = 1; page <= pageCount; page++) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = page.toString();
+      button.setAttribute('aria-label', `Page ${page}`);
+      button.className = page === currentPage
+        ? 'flex h-10 min-w-10 items-center justify-center rounded border border-amber-700 bg-amber-700 px-3 font-bold text-white'
+        : 'flex h-10 min-w-10 items-center justify-center rounded border border-stone-200 bg-white px-3 font-semibold text-stone-600 transition-colors hover:border-amber-700 hover:text-amber-700';
+
+      button.addEventListener('click', () => {
+        currentPage = page;
+        filterAndSort(false);
+        document.getElementById('items-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      pagination.appendChild(button);
+    }
+  }
+
+  function filterAndSort(resetPage = true) {
+    if (resetPage) currentPage = 1;
+
     const minPrice = parseFloat((document.getElementById('min-price') as HTMLInputElement).value) || 0;
     const maxPrice = parseFloat((document.getElementById('max-price') as HTMLInputElement).value) || Infinity;
     const sortBy = (document.getElementById('sort-by') as HTMLSelectElement).value;
@@ -232,31 +268,44 @@ const categoryItems = allAntiques
     const resultsCount = document.getElementById('results-count');
     const cards = Array.from(document.querySelectorAll('.item-card')) as HTMLElement[];
 
-    let visibleCount = 0;
-
-    cards.forEach(card => {
+    const filteredCards = cards.filter(card => {
       const price = parseFloat(card.dataset.price || '0');
       const subcat = card.dataset.subcategory || '';
       const priceMatch = price >= minPrice && price <= maxPrice;
       const subcatMatch = activeSubcategory === 'all' || subcat === activeSubcategory;
-      const isVisible = priceMatch && subcatMatch;
 
-      card.style.display = isVisible ? 'block' : 'none';
-      if (isVisible) visibleCount++;
+      return priceMatch && subcatMatch;
     });
 
-    const sortedCards = cards.filter(card => card.style.display !== 'none').sort((a, b) => {
+    cards.forEach(card => {
+      card.style.display = 'none';
+    });
+
+    const sortedCards = filteredCards.sort((a, b) => {
       const priceA = parseFloat(a.dataset.price || '0');
       const priceB = parseFloat(b.dataset.price || '0');
+      const featuredA = a.dataset.featured === 'true' ? 1 : 0;
+      const featuredB = b.dataset.featured === 'true' ? 1 : 0;
       const orderA = parseInt(a.dataset.order || '0', 10);
       const orderB = parseInt(b.dataset.order || '0', 10);
 
+      if (sortBy === 'featured' && featuredA !== featuredB) return featuredB - featuredA;
       if (sortBy === 'price-asc') return priceA - priceB;
       if (sortBy === 'price-desc') return priceB - priceA;
       return orderA - orderB;
     });
 
     sortedCards.forEach(card => itemsGrid?.appendChild(card));
+
+    const visibleCount = sortedCards.length;
+    const pageCount = Math.max(1, Math.ceil(visibleCount / itemsPerPage));
+    currentPage = Math.min(currentPage, pageCount);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedCards = sortedCards.slice(startIndex, startIndex + itemsPerPage);
+
+    paginatedCards.forEach(card => {
+      card.style.display = 'block';
+    });
 
     if (visibleCount === 0 && cards.length > 0) {
       noResults?.classList.remove('hidden');
@@ -267,11 +316,7 @@ const categoryItems = allAntiques
     }
 
     if (resultsCount) resultsCount.textContent = visibleCount.toString();
-
-    const pagination = document.getElementById('pagination');
-    if (pagination) {
-      pagination.style.display = visibleCount < cards.length ? 'none' : 'flex';
-    }
+    renderPagination(visibleCount);
   }
 
   document.querySelectorAll('.subcategory-link').forEach(link => {
@@ -296,8 +341,9 @@ const categoryItems = allAntiques
     });
   });
 
-  document.getElementById('min-price')?.addEventListener('input', filterAndSort);
-  document.getElementById('max-price')?.addEventListener('input', filterAndSort);
-  document.getElementById('sort-by')?.addEventListener('change', filterAndSort);
+  document.getElementById('min-price')?.addEventListener('input', () => filterAndSort());
+  document.getElementById('max-price')?.addEventListener('input', () => filterAndSort());
+  document.getElementById('sort-by')?.addEventListener('change', () => filterAndSort());
+  filterAndSort();
 </script>
 

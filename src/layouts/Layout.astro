@@ -17,6 +17,55 @@ const pageTitle = localizedTitle ? `${localizedTitle} | ${content.seo.siteName}`
 const pageDescription = localizeProp(description) || content.seo.description;
 const urlBase = Astro.site || Astro.url.origin;
 const canonicalUrl = new URL(currentPath, urlBase);
+const ogImageUrl = new URL("/images/AntiqueShopLogo.png", urlBase);
+const seoKeywords = currentLocale === "bg"
+	? [
+		"Варна",
+		"Антики",
+		"Антикварен магазин",
+		"Антикварен магазин Варна",
+		"Антикварен магазин Берлин",
+		"Берлин",
+		"антикварни предмети",
+		"старинни предмети",
+		"колекционерски предмети",
+		"порцелан",
+		"старинни часовници",
+	]
+	: [
+		"Varna",
+		"antiques",
+		"antique shop",
+		"antique shop Varna",
+		"antique shop Berlin",
+		"Berlin",
+		"vintage objects",
+		"collectibles",
+		"porcelain antiques",
+		"antique watches",
+	];
+const structuredData = {
+	"@context": "https://schema.org",
+	"@type": "Store",
+	name: content.seo.siteName,
+	url: canonicalUrl.origin,
+	image: ogImageUrl.href,
+	description: pageDescription,
+	keywords: seoKeywords.join(", "),
+	email: "antiqueshop.berlin@gmail.com",
+	telephone: "+359895361505",
+	address: {
+		"@type": "PostalAddress",
+		streetAddress: "бул. Княгиня Мария Луиза 5А",
+		addressLocality: "Варна",
+		postalCode: "9000",
+		addressCountry: "BG",
+	},
+	areaServed: [
+		{ "@type": "City", name: "Варна" },
+		{ "@type": "City", name: "Берлин" },
+	],
+};
 const alternateUrls = locales.map((locale) => ({
 	locale,
 	href: new URL(localizedPath(locale, currentPathWithoutLocale), urlBase),
@@ -36,9 +85,24 @@ const footer = content.footer;
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<meta name="description" content={pageDescription} />
+		<meta name="keywords" content={seoKeywords.join(", ")} />
+		<meta name="robots" content="index, follow, max-image-preview:large" />
+		<meta name="author" content={content.seo.siteName} />
 		<link rel="canonical" href={canonicalUrl.href} />
 		{alternateUrls.map(({ locale, href }) => <link rel="alternate" hreflang={locale} href={href.href} />)}
 		<link rel="alternate" hreflang="x-default" href={alternateUrls.find(({ locale }) => locale === "bg")?.href.href} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={content.seo.siteName} />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={pageDescription} />
+		<meta property="og:url" content={canonicalUrl.href} />
+		<meta property="og:image" content={ogImageUrl.href} />
+		<meta property="og:locale" content={currentLocale === "bg" ? "bg_BG" : "en_US"} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={pageDescription} />
+		<meta name="twitter:image" content={ogImageUrl.href} />
+		<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 	</head>
 	<body class={`${bodyClass} text-stone-900 flex flex-col min-h-screen`}>
 		<header class="bg-white shadow-sm sticky top-0 z-50">
