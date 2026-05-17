@@ -129,11 +129,36 @@ const DependentSelectPreview = createClass({
 // Register the widget
 CMS.registerWidget('dependent-select', DependentSelectControl, DependentSelectPreview);
 
+const BULGARIAN_TO_LATIN = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ж: 'zh', з: 'z',
+  и: 'i', й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p',
+  р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'h', ц: 'ts', ч: 'ch',
+  ш: 'sh', щ: 'sht', ъ: 'a', ь: 'y', ю: 'yu', я: 'ya'
+};
+
+function createLatinSlug(value) {
+  const transliterated = String(value || '')
+    .toLowerCase()
+    .split('')
+    .map(char => BULGARIAN_TO_LATIN[char] || char)
+    .join('');
+
+  return transliterated
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .replace(/-{2,}/g, '-');
+}
+
 
 
 CMS.registerEventListener({
   name: 'preSave',
   handler: ({ entry }) => {
+    const data = entry.get('data');
+    const title = data.get('title');
+    const latinSlug = createLatinSlug(title) || `antique-${Date.now()}`;
     const images = entry.getIn(['data', 'images']);
 
     // Check if images exists, is a list, and has at least one item with a URL
@@ -142,6 +167,8 @@ CMS.registerEventListener({
       alert("Грешка: Трябва да добавите поне една снимка!");
       throw new Error("At least one image is required.");
     }
+
+    return data.set('latinSlug', latinSlug);
   },
 });
     </script>

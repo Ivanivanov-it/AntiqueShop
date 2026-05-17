@@ -20,9 +20,10 @@ collections:
     label: "Antiques"
     folder: "src/content/antiques"
     create: true
-    slug: "{{slug}}"
+    slug: "{{fields.latinSlug}}"
 
     fields:
+      - { label: "Latin slug", name: "latinSlug", widget: "hidden", required: false }
       - { label: "Име", name: "title", widget: "string" }
 
       - { label: "Описание", name: "description", widget: "text" }
