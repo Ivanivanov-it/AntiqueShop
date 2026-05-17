@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getItemTitle, localizedPath, staticLocalePaths } from '../../utils/i18n.js';
 import { categories, getSubcategoryName } from '../../utils/categories.js';
+import { getImageSet } from '../../utils/images.js';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 
@@ -14,6 +15,10 @@ const allAntiques = await getCollection('antiques');
 type AntiqueImage = CollectionEntry<'antiques'>['data']['images'][number];
 
 const getImageUrl = (image: AntiqueImage) => typeof image === 'string' ? image : image.url;
+const getCardImageSet = (item: CollectionEntry<'antiques'>) => {
+  const image = item.data.images?.[item.data.images.length - 1];
+  return image ? getImageSet(getImageUrl(image).replace('/uploads/', '/optimized/')) : null;
+};
 
 const sortByRecentDate = (a: CollectionEntry<'antiques'>, b: CollectionEntry<'antiques'>) => {
   const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
@@ -44,6 +49,8 @@ const bgCopy = {
     noImage: '[Няма изображение]',
     selected: 'Избрано',
     viewDetails: 'Виж детайли',
+    previous: 'Предишен предмет',
+    next: 'Следващ предмет',
     photos: 'снимки',
     price: 'Цена',
     shopEyebrow: 'Антикварен магазин Берлин',
@@ -88,6 +95,8 @@ const enCopy = {
     noImage: '[No image]',
     selected: 'Featured',
     viewDetails: 'View details',
+    previous: 'Previous item',
+    next: 'Next item',
     photos: 'photos',
     price: 'Price',
     shopEyebrow: 'Antique Shop Berlin',
@@ -193,17 +202,90 @@ const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
         </a>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {featuredItems.map((item) => (
+      <div class="relative sm:hidden" data-item-carousel>
+        <div class="overflow-hidden">
+          {featuredItems.map((item, index) => {
+            const imageSet = getCardImageSet(item);
+            return (
+          <article class={`group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 ${index === 0 ? '' : 'hidden'}`} data-carousel-slide>
+            <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
+              <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
+                {imageSet ? (
+                  <img
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="100vw"
+                    alt={getItemTitle(item, currentLocale)}
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
+                    {c.noImage}
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  {c.selected}
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                  <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                    {c.viewDetails}
+                  </span>
+                  <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} {c.photos}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div class="p-5">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+                  {getItemSubcategory(item)}
+                </p>
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950">
+                  {getItemTitle(item, currentLocale)}
+                </h3>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">{c.price}</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+            );
+          })}
+        </div>
+        {featuredItems.length > 1 && (
+          <>
+            <button type="button" class="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.previous} data-carousel-prev>
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <button type="button" class="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.next} data-carousel-next>
+              <span aria-hidden="true">&rsaquo;</span>
+            </button>
+          </>
+        )}
+      </div>
+
+      <div class="hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+        {featuredItems.map((item) => {
+          const imageSet = getCardImageSet(item);
+          return (
           <article class="group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:border-[#c5a059]/70 hover:bg-white">
             <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
               <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
-                {item.data.images && item.data.images.length > 0 ? (
+                {imageSet ? (
                   <img
-                    src={getImageUrl(item.data.images[item.data.images.length - 1])}
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="(max-width: 1024px) 50vw, 25vw"
                     alt={getItemTitle(item, currentLocale)}
                     class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
@@ -240,7 +322,8 @@ const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
               </div>
             </a>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
@@ -289,17 +372,90 @@ const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
         </a>
       </div>
 
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {newestItems.map((item) => (
+      <div class="relative sm:hidden" data-item-carousel>
+        <div class="overflow-hidden">
+          {newestItems.map((item, index) => {
+            const imageSet = getCardImageSet(item);
+            return (
+          <article class={`group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 ${index === 0 ? '' : 'hidden'}`} data-carousel-slide>
+            <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
+              <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
+                {imageSet ? (
+                  <img
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="100vw"
+                    alt={getItemTitle(item, currentLocale)}
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
+                    {c.noImage}
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  {c.new}
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                  <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                    {c.viewDetails}
+                  </span>
+                  <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} {c.photos}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div class="p-5">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+                  {getItemSubcategory(item)}
+                </p>
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950">
+                  {getItemTitle(item, currentLocale)}
+                </h3>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">{c.price}</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+            );
+          })}
+        </div>
+        {newestItems.length > 1 && (
+          <>
+            <button type="button" class="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.previous} data-carousel-prev>
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <button type="button" class="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.next} data-carousel-next>
+              <span aria-hidden="true">&rsaquo;</span>
+            </button>
+          </>
+        )}
+      </div>
+
+      <div class="hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+        {newestItems.map((item) => {
+          const imageSet = getCardImageSet(item);
+          return (
           <article class="group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:border-[#c5a059]/70 hover:bg-white">
             <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
               <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
-                {item.data.images && item.data.images.length > 0 ? (
+                {imageSet ? (
                   <img
-                    src={getImageUrl(item.data.images[item.data.images.length - 1])}
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="(max-width: 1024px) 50vw, 25vw"
                     alt={getItemTitle(item, currentLocale)}
                     class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
@@ -336,7 +492,8 @@ const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
               </div>
             </a>
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   </section>
@@ -457,6 +614,27 @@ const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
       </div>
     </div>
   </section>
+
+  <script>
+    document.querySelectorAll<HTMLElement>('[data-item-carousel]').forEach((carousel) => {
+      const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-slide]'));
+      const previousButton = carousel.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+      const nextButton = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
+      let activeIndex = 0;
+
+      const showSlide = (nextIndex: number) => {
+        if (slides.length === 0) return;
+
+        activeIndex = (nextIndex + slides.length) % slides.length;
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('hidden', index !== activeIndex);
+        });
+      };
+
+      previousButton?.addEventListener('click', () => showSlide(activeIndex - 1));
+      nextButton?.addEventListener('click', () => showSlide(activeIndex + 1));
+    });
+  </script>
 </Layout>
 
 
