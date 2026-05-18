@@ -17,7 +17,7 @@ type AntiqueImage = CollectionEntry<'antiques'>['data']['images'][number];
 const getImageUrl = (image: AntiqueImage) => typeof image === 'string' ? image : image.url;
 const getCardImageSet = (item: CollectionEntry<'antiques'>) => {
   const image = item.data.images?.[item.data.images.length - 1];
-  return image ? getImageSet(getImageUrl(image).replace('/uploads/', '/optimized/')) : null;
+  return image ? getImageSet(getImageUrl(image)) : null;
 };
 
 const sortByRecentDate = (a: CollectionEntry<'antiques'>, b: CollectionEntry<'antiques'>) => {

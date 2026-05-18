@@ -156,8 +156,7 @@ const categoryItems = allAntiques
           {categoryItems.map((item, index) => {
             const firstAddedImage = item.data.images[item.data.images.length - 1];
             const firstImageUrl = typeof firstAddedImage === 'string' ? firstAddedImage : firstAddedImage.url;
-            const optimizedBase = firstImageUrl.replace('/uploads/', '/optimized/');
-            const imgSet = getImageSet(optimizedBase);
+            const imgSet = getImageSet(firstImageUrl);
             return (
               <article class="item-card group overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg shadow-stone-950/5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-600/70 hover:shadow-xl hover:shadow-stone-950/10" data-price={item.data.price} data-subcategory={item.data.subcategory} data-featured={item.data.featured === true ? 'true' : 'false'} data-order={index}>
                 <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">

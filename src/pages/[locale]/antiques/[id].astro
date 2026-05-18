@@ -19,8 +19,7 @@ const { Content } = await render(item);
 
 const imageItems = (data.images || []).map(img => typeof img === 'string' ? { url: img, caption: '' } : { url: img.url, caption: img.caption || '' }).reverse();
 const imageSets = imageItems.map(({ url }) => {
-  const optimizedBase = url.replace('/uploads/', '/optimized/');
-  return getImageSet(optimizedBase);
+  return getImageSet(url);
 });
 const primaryCaption = imageItems[0]?.caption?.trim() || '';
 
