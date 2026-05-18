@@ -1,14 +1,4 @@
 {
-  "/images/uploads/1000000540.jpg": {
-    "small": "/images/optimized/1000000540-fc9899b0f9-400.webp",
-    "medium": "/images/optimized/1000000540-fc9899b0f9-800.webp",
-    "large": "/images/optimized/1000000540-fc9899b0f9-1200.webp"
-  },
-  "/images/uploads/1000001107.jpg": {
-    "small": "/images/optimized/1000001107-8b9317131d-400.webp",
-    "medium": "/images/optimized/1000001107-8b9317131d-800.webp",
-    "large": "/images/optimized/1000001107-8b9317131d-1200.webp"
-  },
   "/images/uploads/1000075125-01.jpeg": {
     "small": "/images/optimized/1000075125-01-0c0d5fe1c6-400.webp",
     "medium": "/images/optimized/1000075125-01-0c0d5fe1c6-800.webp",
@@ -244,74 +234,9 @@
     "medium": "/images/optimized/20260504_153103-01-33d709a8f3-800.webp",
     "large": "/images/optimized/20260504_153103-01-33d709a8f3-1200.webp"
   },
-  "/images/uploads/3636056d-eb94-4932-8248-902c04b3d9b3.jpg": {
-    "small": "/images/optimized/3636056d-eb94-4932-8248-902c04b3d9b3-8b9317131d-400.webp",
-    "medium": "/images/optimized/3636056d-eb94-4932-8248-902c04b3d9b3-8b9317131d-800.webp",
-    "large": "/images/optimized/3636056d-eb94-4932-8248-902c04b3d9b3-8b9317131d-1200.webp"
-  },
-  "/images/uploads/antique-books.png": {
-    "small": "/images/optimized/antique-books-f971daf7c4-400.webp",
-    "medium": "/images/optimized/antique-books-f971daf7c4-800.webp",
-    "large": "/images/optimized/antique-books-f971daf7c4-1200.webp"
-  },
-  "/images/uploads/category-porcelain.webp": {
-    "small": "/images/optimized/category-porcelain-edf4d73c23-400.webp",
-    "medium": "/images/optimized/category-porcelain-edf4d73c23-800.webp",
-    "large": "/images/optimized/category-porcelain-edf4d73c23-1200.webp"
-  },
-  "/images/uploads/ethnics-folklore.png": {
-    "small": "/images/optimized/ethnics-folklore-a1afd82fe9-400.webp",
-    "medium": "/images/optimized/ethnics-folklore-a1afd82fe9-800.webp",
-    "large": "/images/optimized/ethnics-folklore-a1afd82fe9-1200.webp"
-  },
   "/images/uploads/img_20240724_230722_960.jpg": {
     "small": "/images/optimized/img_20240724_230722_960-af873e6edf-400.webp",
     "medium": "/images/optimized/img_20240724_230722_960-af873e6edf-800.webp",
     "large": "/images/optimized/img_20240724_230722_960-af873e6edf-1200.webp"
-  },
-  "/images/uploads/screenshot_20260418-225100_instagram-01.jpeg": {
-    "small": "/images/optimized/screenshot_20260418-225100_instagram-01-0c2cdb8c59-400.webp",
-    "medium": "/images/optimized/screenshot_20260418-225100_instagram-01-0c2cdb8c59-800.webp",
-    "large": "/images/optimized/screenshot_20260418-225100_instagram-01-0c2cdb8c59-1200.webp"
-  },
-  "/images/uploads/watch.webp": {
-    "small": "/images/optimized/watch-2556e3c02a-400.webp",
-    "medium": "/images/optimized/watch-2556e3c02a-800.webp",
-    "large": "/images/optimized/watch-2556e3c02a-1200.webp"
-  },
-  "/images/uploads/watch1.webp": {
-    "small": "/images/optimized/watch1-6f9a5132df-400.webp",
-    "medium": "/images/optimized/watch1-6f9a5132df-800.webp",
-    "large": "/images/optimized/watch1-6f9a5132df-1200.webp"
-  },
-  "/images/uploads/watch2.jpg": {
-    "small": "/images/optimized/watch2-5199188b9e-400.webp",
-    "medium": "/images/optimized/watch2-5199188b9e-800.webp",
-    "large": "/images/optimized/watch2-5199188b9e-1200.webp"
-  },
-  "/images/uploads/watch3.jpg": {
-    "small": "/images/optimized/watch3-757ea69ab5-400.webp",
-    "medium": "/images/optimized/watch3-757ea69ab5-800.webp",
-    "large": "/images/optimized/watch3-757ea69ab5-1200.webp"
-  },
-  "/images/uploads/watch4.jpg": {
-    "small": "/images/optimized/watch4-d1537fdd28-400.webp",
-    "medium": "/images/optimized/watch4-d1537fdd28-800.webp",
-    "large": "/images/optimized/watch4-d1537fdd28-1200.webp"
-  },
-  "/images/uploads/картонче.png": {
-    "small": "/images/optimized/a90ceac04a-400.webp",
-    "medium": "/images/optimized/a90ceac04a-800.webp",
-    "large": "/images/optimized/a90ceac04a-1200.webp"
-  },
-  "/images/uploads/порцелан.jpg": {
-    "small": "/images/optimized/7e43410189-400.webp",
-    "medium": "/images/optimized/7e43410189-800.webp",
-    "large": "/images/optimized/7e43410189-1200.webp"
-  },
-  "/images/uploads/слънчо.jpg": {
-    "small": "/images/optimized/30f3f6b376-400.webp",
-    "medium": "/images/optimized/30f3f6b376-800.webp",
-    "large": "/images/optimized/30f3f6b376-1200.webp"
   }
 }
