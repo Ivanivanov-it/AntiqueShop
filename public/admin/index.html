@@ -7,6 +7,133 @@
   <body>
     <div id="nc-root"></div>
 
+    <script>
+      (() => {
+        const originalFetch = window.fetch.bind(window);
+        const retryDelays = [500, 1500, 3000];
+        const diagnostics = [];
+
+        function recordDiagnostic(message) {
+          const line = `${new Date().toLocaleTimeString()} ${message}`;
+          diagnostics.push(line);
+          diagnostics.splice(0, diagnostics.length - 8);
+          window.__CMS_DIAGNOSTICS__ = diagnostics.slice();
+          console.warn(line);
+
+          const panel = document.getElementById('cms-diagnostics');
+          if (panel) {
+            panel.textContent = diagnostics.join('\n');
+            panel.style.display = 'block';
+          }
+        }
+
+        function isLocalCmsRequest(input) {
+          const url = typeof input === 'string' ? input : input && input.url;
+          if (!url) return false;
+          return url.includes('/api/v1');
+        }
+
+        function createFetchArgs(input, init) {
+          if (input instanceof Request) {
+            return [input.clone(), init];
+          }
+          return [input, init];
+        }
+
+        async function createArchivedMediaFetchArgs(input, init) {
+          try {
+            const bodyText = init && init.body
+              ? String(init.body)
+              : input instanceof Request
+                ? await input.clone().text()
+                : '';
+
+            if (!bodyText) return null;
+
+            const body = JSON.parse(bodyText);
+            const mediaPath = body && body.params && body.params.path;
+
+            if (
+              body.action !== 'getMediaFile' ||
+              typeof mediaPath !== 'string' ||
+              !mediaPath.startsWith('public/images/cms-uploads/')
+            ) {
+              return null;
+            }
+
+            const fallbackBody = JSON.stringify({
+              ...body,
+              params: {
+                ...body.params,
+                path: mediaPath.replace('public/images/cms-uploads/', 'public/images/uploads/'),
+              },
+            });
+
+            if (input instanceof Request) {
+              return [new Request(input, { body: fallbackBody }), init];
+            }
+
+            return [input, { ...(init || {}), body: fallbackBody }];
+          } catch {
+            return null;
+          }
+        }
+
+        function wait(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        window.fetch = async function retryLocalCmsFetch(input, init) {
+          if (!isLocalCmsRequest(input)) {
+            return originalFetch(input, init);
+          }
+
+          let lastError;
+          const archivedMediaFetchArgs = await createArchivedMediaFetchArgs(input, init);
+
+          for (let attempt = 0; attempt <= retryDelays.length; attempt += 1) {
+            try {
+              const response = await originalFetch(...createFetchArgs(input, init));
+              if (response.status >= 500 && archivedMediaFetchArgs) {
+                const fallbackResponse = await originalFetch(...createFetchArgs(...archivedMediaFetchArgs));
+                if (fallbackResponse.ok) {
+                  recordDiagnostic('CMS media fallback loaded archived upload');
+                  return fallbackResponse;
+                }
+              }
+
+              const responseCopy = response.clone();
+              responseCopy.text().then(text => {
+                if (text && /"error"\s*:/.test(text)) {
+                  recordDiagnostic(`CMS JSON error ${typeof input === 'string' ? input : input.url}: ${text.slice(0, 500)}`);
+                }
+              }).catch(() => {});
+
+              if (response.status < 500 || attempt === retryDelays.length) {
+                if (!response.ok) {
+                  recordDiagnostic(`CMS ${response.status} ${response.statusText || ''} ${typeof input === 'string' ? input : input.url}`);
+                }
+                return response;
+              }
+              lastError = new Error(`CMS request failed with ${response.status}`);
+              recordDiagnostic(`${lastError.message}; retry ${attempt + 1}/${retryDelays.length}`);
+            } catch (error) {
+              lastError = error;
+              recordDiagnostic(`${error.message}; retry ${attempt + 1}/${retryDelays.length}`);
+              if (attempt === retryDelays.length) {
+                throw error;
+              }
+            }
+
+            await wait(retryDelays[attempt]);
+          }
+
+          throw lastError;
+        };
+      })();
+    </script>
+    <pre id="cms-diagnostics" style="display:none;position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;max-height:35vh;overflow:auto;margin:0;padding:8px;background:#111;color:#fff;border-radius:4px;font:12px/1.4 monospace;white-space:pre-wrap;"></pre>
+
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <script src="https://unpkg.com/decap-cms@3.8.3/dist/decap-cms.js"></script>
     <script src="/admin/subcategories.js"></script>
@@ -23,6 +150,12 @@
       // }
 
 const DependentSelectControl = createClass({
+  getSubcategoryOptions(category) {
+    const subcategories = window.SUBCATEGORIES || {};
+    const options = category ? subcategories[category] : [];
+    return Array.isArray(options) ? options : [];
+  },
+
   getInitialState() {
     // Try to get category from props immediately for Edit mode
     const initialCat = this.props.entry ? this.props.entry.getIn(['data', 'category']) : '';
@@ -44,8 +177,8 @@ const DependentSelectControl = createClass({
     }
 
     // 2. Check if this category requires a subcategory
-    const options = (window.SUBCATEGORIES && currentCat) ? window.SUBCATEGORIES[currentCat] : [];
-    const needsSubcategory = options && options.length > 0;
+    const options = this.getSubcategoryOptions(currentCat);
+    const needsSubcategory = options.length > 0;
 
     // 3. Validation Logic
     if (needsSubcategory && (!value || value.trim() === "")) {
@@ -96,8 +229,8 @@ const DependentSelectControl = createClass({
   render() {
     const { value, forID, classNameWrapper, onChange } = this.props;
     const category = this.state.category;
-    const options = (window.SUBCATEGORIES && category) ? window.SUBCATEGORIES[category] : [];
-    const hasSubcategories = options && options.length > 0;
+    const options = this.getSubcategoryOptions(category);
+    const hasSubcategories = options.length > 0;
 
     return h('div', { className: classNameWrapper }, [
       h('select', {
@@ -151,6 +284,14 @@ function createLatinSlug(value) {
     .replace(/-{2,}/g, '-');
 }
 
+function getTodayDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 
 
 CMS.registerEventListener({
@@ -160,6 +301,7 @@ CMS.registerEventListener({
     const title = data.get('title');
     const latinSlug = createLatinSlug(title) || `antique-${Date.now()}`;
     const images = entry.getIn(['data', 'images']);
+    const date = data.get('date') || getTodayDate();
 
     // Check if images exists, is a list, and has at least one item with a URL
     if (!images || images.size === 0 || !images.getIn([0, 'url'])) {
@@ -168,7 +310,18 @@ CMS.registerEventListener({
       throw new Error("At least one image is required.");
     }
 
-    return data.set('latinSlug', latinSlug);
+    return data
+      .set('latinSlug', latinSlug)
+      .set('date', date);
+  },
+});
+
+CMS.registerEventListener({
+  name: 'postSave',
+  handler: () => {
+    fetch('/api/cms-refresh', { method: 'POST' }).catch((error) => {
+      console.warn('CMS refresh request failed', error);
+    });
   },
 });
     </script>

@@ -7,7 +7,20 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const inputDir = path.join(__dirname, "../public/images/uploads");
+const legacyUploadDir = path.join(__dirname, "../public/images/uploads");
+const cmsUploadDir = path.join(__dirname, "../public/images/cms-uploads");
+const contentDir = path.join(__dirname, "../src/content/antiques");
+
+const inputDirs = [
+  {
+    dir: legacyUploadDir,
+    publicPath: "/images/uploads",
+  },
+  {
+    dir: cmsUploadDir,
+    publicPath: "/images/cms-uploads",
+  },
+];
 const outputDir = path.join(__dirname, "../public/images/optimized");
 const publicManifestPath = path.join(outputDir, "manifest.json");
 const generatedDir = path.join(__dirname, "../src/generated");
@@ -20,6 +33,10 @@ const sizes = [
   { width: 1200, key: "large" },
 ];
 const QUALITY = 75;
+const FILE_STABLE_MS = 1200;
+const FILE_STABLE_POLL_MS = 200;
+const WRITE_RETRY_DELAY_MS = 150;
+const WRITE_RETRIES = 12;
 
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
@@ -27,6 +44,12 @@ if (!fs.existsSync(outputDir)) {
 
 if (!fs.existsSync(generatedDir)) {
   fs.mkdirSync(generatedDir, { recursive: true });
+}
+
+for (const { dir } of inputDirs) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 }
 
 function getSafeStem(file) {
@@ -58,39 +81,145 @@ function isImage(file) {
   return /\.(jpg|jpeg|png|webp)$/i.test(file);
 }
 
-async function processImages() {
-  const files = fs.readdirSync(inputDir);
-  const manifest = {};
+function replaceAll(value, search, replacement) {
+  return value.split(search).join(replacement);
+}
+
+function getUniqueDestination(file, inputPath) {
+  const targetPath = path.join(legacyUploadDir, file);
+  if (!fs.existsSync(targetPath)) {
+    return { file, path: targetPath };
+  }
+
+  const parsed = path.parse(file);
+  const hash = getContentHash(inputPath);
+  const uniqueFile = `${parsed.name}-${hash}${parsed.ext}`;
+  return {
+    file: uniqueFile,
+    path: path.join(legacyUploadDir, uniqueFile),
+  };
+}
+
+async function archiveCmsUploads() {
+  if (!fs.existsSync(cmsUploadDir)) return;
+
+  const files = fs.readdirSync(cmsUploadDir).filter(isImage);
+  if (files.length === 0) return;
+
+  const markdownFiles = fs
+    .readdirSync(contentDir)
+    .filter((file) => /\.(md|mdx)$/i.test(file))
+    .map((file) => path.join(contentDir, file));
 
   for (const file of files) {
-    if (!isImage(file)) continue;
+    const inputPath = path.join(cmsUploadDir, file);
+    await waitForStableFile(inputPath);
 
-    const inputPath = path.join(inputDir, file);
-    const baseName = getBaseName(file, inputPath);
-    const uploadUrl = `/images/uploads/${file}`;
-    manifest[uploadUrl] = {};
+    const destination = getUniqueDestination(file, inputPath);
+    const fromUrl = `/images/cms-uploads/${file}`;
+    const toUrl = `/images/uploads/${destination.file}`;
 
-    for (const { width, key } of sizes) {
-      const outputFileName = `${baseName}-${width}.webp`;
-      const outputPath = path.join(outputDir, outputFileName);
-      const outputUrl = `/images/optimized/${outputFileName}`;
+    for (const markdownPath of markdownFiles) {
+      const current = fs.readFileSync(markdownPath, "utf8");
+      if (!current.includes(fromUrl)) continue;
 
-      manifest[uploadUrl][key] = outputUrl;
+      const next = replaceAll(current, fromUrl, toUrl);
+      fs.writeFileSync(markdownPath, next);
+    }
 
-      if (fs.existsSync(outputPath)) continue;
+    fs.renameSync(inputPath, destination.path);
+    console.log(`Archived CMS upload ${file} -> ${destination.file}`);
+  }
+}
 
-      try {
-        await sharp(inputPath)
-          .resize({
-            width,
-            withoutEnlargement: true,
-          })
-          .webp({ quality: QUALITY })
-          .toFile(outputPath);
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-        console.log(`Optimized ${file} -> ${outputFileName}`);
-      } catch (err) {
-        console.error(`Error processing ${file}:`, err);
+async function waitForStableFile(filePath) {
+  let previous;
+  let stableFor = 0;
+
+  while (stableFor < FILE_STABLE_MS) {
+    const current = fs.statSync(filePath);
+    const signature = `${current.size}:${current.mtimeMs}`;
+
+    if (signature === previous) {
+      stableFor += FILE_STABLE_POLL_MS;
+    } else {
+      previous = signature;
+      stableFor = 0;
+    }
+
+    await sleep(FILE_STABLE_POLL_MS);
+  }
+}
+
+async function writeIfChanged(filePath, content) {
+  if (fs.existsSync(filePath) && fs.readFileSync(filePath, "utf8") === content) {
+    return;
+  }
+
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  fs.writeFileSync(tmpPath, content);
+
+  for (let attempt = 0; attempt <= WRITE_RETRIES; attempt += 1) {
+    try {
+      fs.renameSync(tmpPath, filePath);
+      return;
+    } catch (err) {
+      if (!["EPERM", "EACCES", "EBUSY"].includes(err.code) || attempt === WRITE_RETRIES) {
+        try {
+          fs.unlinkSync(tmpPath);
+        } catch {}
+        throw err;
+      }
+
+      await sleep(WRITE_RETRY_DELAY_MS);
+    }
+  }
+}
+
+async function processImages() {
+  await archiveCmsUploads();
+
+  const manifest = {};
+
+  for (const { dir, publicPath } of inputDirs) {
+    const files = fs.readdirSync(dir);
+
+    for (const file of files) {
+      if (!isImage(file)) continue;
+
+      const inputPath = path.join(dir, file);
+      await waitForStableFile(inputPath);
+
+      const baseName = getBaseName(file, inputPath);
+      const uploadUrl = `${publicPath}/${file}`;
+      manifest[uploadUrl] = {};
+
+      for (const { width, key } of sizes) {
+        const outputFileName = `${baseName}-${width}.webp`;
+        const outputPath = path.join(outputDir, outputFileName);
+        const outputUrl = `/images/optimized/${outputFileName}`;
+
+        manifest[uploadUrl][key] = outputUrl;
+
+        if (fs.existsSync(outputPath)) continue;
+
+        try {
+          await sharp(inputPath)
+            .resize({
+              width,
+              withoutEnlargement: true,
+            })
+            .webp({ quality: QUALITY })
+            .toFile(outputPath);
+
+          console.log(`Optimized ${file} -> ${outputFileName}`);
+        } catch (err) {
+          console.error(`Error processing ${file}:`, err);
+        }
       }
     }
   }
@@ -98,14 +227,9 @@ async function processImages() {
   const manifestJson = `${JSON.stringify(manifest, null, 2)}\n`;
   const manifestModule = `const imageManifest = ${JSON.stringify(manifest, null, 2)};\n\nexport default imageManifest;\n`;
 
-  fs.writeFileSync(`${publicManifestPath}.tmp`, manifestJson);
-  fs.renameSync(`${publicManifestPath}.tmp`, publicManifestPath);
-
-  fs.writeFileSync(`${importableManifestPath}.tmp`, manifestJson);
-  fs.renameSync(`${importableManifestPath}.tmp`, importableManifestPath);
-
-  fs.writeFileSync(`${importableManifestModulePath}.tmp`, manifestModule);
-  fs.renameSync(`${importableManifestModulePath}.tmp`, importableManifestModulePath);
+  await writeIfChanged(publicManifestPath, manifestJson);
+  await writeIfChanged(importableManifestPath, manifestJson);
+  await writeIfChanged(importableManifestModulePath, manifestModule);
 }
 
 processImages();
