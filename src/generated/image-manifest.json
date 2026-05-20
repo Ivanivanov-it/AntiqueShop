@@ -1,29 +1,4 @@
 {
-  "/images/uploads/1000001099-8a8ad93491.jpg": {
-    "small": "/images/optimized/1000001099-8a8ad93491-8a8ad93491-400.webp",
-    "medium": "/images/optimized/1000001099-8a8ad93491-8a8ad93491-800.webp",
-    "large": "/images/optimized/1000001099-8a8ad93491-8a8ad93491-1200.webp"
-  },
-  "/images/uploads/1000001099.jpg": {
-    "small": "/images/optimized/1000001099-8a8ad93491-400.webp",
-    "medium": "/images/optimized/1000001099-8a8ad93491-800.webp",
-    "large": "/images/optimized/1000001099-8a8ad93491-1200.webp"
-  },
-  "/images/uploads/1000001107-8b9317131d.jpg": {
-    "small": "/images/optimized/1000001107-8b9317131d-8b9317131d-400.webp",
-    "medium": "/images/optimized/1000001107-8b9317131d-8b9317131d-800.webp",
-    "large": "/images/optimized/1000001107-8b9317131d-8b9317131d-1200.webp"
-  },
-  "/images/uploads/1000001107.jpg": {
-    "small": "/images/optimized/1000001107-8b9317131d-400.webp",
-    "medium": "/images/optimized/1000001107-8b9317131d-800.webp",
-    "large": "/images/optimized/1000001107-8b9317131d-1200.webp"
-  },
-  "/images/uploads/1000001111.jpg": {
-    "small": "/images/optimized/1000001111-6a9363b57f-400.webp",
-    "medium": "/images/optimized/1000001111-6a9363b57f-800.webp",
-    "large": "/images/optimized/1000001111-6a9363b57f-1200.webp"
-  },
   "/images/uploads/1000075125-01.jpeg": {
     "small": "/images/optimized/1000075125-01-0c0d5fe1c6-400.webp",
     "medium": "/images/optimized/1000075125-01-0c0d5fe1c6-800.webp",
@@ -273,50 +248,5 @@
     "small": "/images/optimized/20260504_153103-01-33d709a8f3-400.webp",
     "medium": "/images/optimized/20260504_153103-01-33d709a8f3-800.webp",
     "large": "/images/optimized/20260504_153103-01-33d709a8f3-1200.webp"
-  },
-  "/images/uploads/20260513_192550.jpg": {
-    "small": "/images/optimized/20260513_192550-2bc36465cf-400.webp",
-    "medium": "/images/optimized/20260513_192550-2bc36465cf-800.webp",
-    "large": "/images/optimized/20260513_192550-2bc36465cf-1200.webp"
-  },
-  "/images/uploads/20260513_192629.jpg": {
-    "small": "/images/optimized/20260513_192629-1167705496-400.webp",
-    "medium": "/images/optimized/20260513_192629-1167705496-800.webp",
-    "large": "/images/optimized/20260513_192629-1167705496-1200.webp"
-  },
-  "/images/uploads/20260514_153536.jpg": {
-    "small": "/images/optimized/20260514_153536-349ccff0e7-400.webp",
-    "medium": "/images/optimized/20260514_153536-349ccff0e7-800.webp",
-    "large": "/images/optimized/20260514_153536-349ccff0e7-1200.webp"
-  },
-  "/images/uploads/20260518_095650.jpg": {
-    "small": "/images/optimized/20260518_095650-19cd2748f9-400.webp",
-    "medium": "/images/optimized/20260518_095650-19cd2748f9-800.webp",
-    "large": "/images/optimized/20260518_095650-19cd2748f9-1200.webp"
-  },
-  "/images/uploads/img_20240724_230722_960.jpg": {
-    "small": "/images/optimized/img_20240724_230722_960-af873e6edf-400.webp",
-    "medium": "/images/optimized/img_20240724_230722_960-af873e6edf-800.webp",
-    "large": "/images/optimized/img_20240724_230722_960-af873e6edf-1200.webp"
-  },
-  "/images/uploads/screenshot_20260517-130114_lidl-plus.jpg": {
-    "small": "/images/optimized/screenshot_20260517-130114_lidl-plus-26b15e8b00-400.webp",
-    "medium": "/images/optimized/screenshot_20260517-130114_lidl-plus-26b15e8b00-800.webp",
-    "large": "/images/optimized/screenshot_20260517-130114_lidl-plus-26b15e8b00-1200.webp"
-  },
-  "/images/uploads/картонче-a90ceac04a.png": {
-    "small": "/images/optimized/a90ceac04a-a90ceac04a-400.webp",
-    "medium": "/images/optimized/a90ceac04a-a90ceac04a-800.webp",
-    "large": "/images/optimized/a90ceac04a-a90ceac04a-1200.webp"
-  },
-  "/images/uploads/картонче.png": {
-    "small": "/images/optimized/a90ceac04a-400.webp",
-    "medium": "/images/optimized/a90ceac04a-800.webp",
-    "large": "/images/optimized/a90ceac04a-1200.webp"
-  },
-  "/images/cms-uploads/1000001107.jpg": {
-    "small": "/images/optimized/1000001107-8b9317131d-400.webp",
-    "medium": "/images/optimized/1000001107-8b9317131d-800.webp",
-    "large": "/images/optimized/1000001107-8b9317131d-1200.webp"
   }
 }
