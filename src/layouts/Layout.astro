@@ -219,18 +219,31 @@ const footer = content.footer;
 				</div>
 			</div>
 		</footer>
-		<script>
-  import netlifyIdentity from "netlify-identity-widget";
-  netlifyIdentity.init();
-  netlifyIdentity.on("init", user => {
-    if (!user) {
-      netlifyIdentity.on("login", () => {
-        document.location.href = "/admin/";
-      });
-    }
-  });
-</script>
-		<script>
+		<script is:inline>
+			(() => {
+				if (!/(invite_token|confirmation_token|recovery_token|email_change_token|access_token|error)=/.test(window.location.hash)) {
+					return;
+				}
+
+				const script = document.createElement("script");
+				script.src = "https://identity.netlify.com/v1/netlify-identity-widget.js";
+				script.onload = () => {
+					const identity = window.netlifyIdentity;
+					if (!identity) return;
+
+					identity.on("init", (user) => {
+						if (!user) {
+							identity.on("login", () => {
+								document.location.href = "/admin/";
+							});
+						}
+					});
+					identity.init();
+				};
+				document.head.append(script);
+			})();
+		</script>
+		<script is:inline>
 			const categoryNav = document.querySelector("[data-category-nav]");
 			const categoryToggle = categoryNav?.querySelector("[data-category-toggle]");
 			const categoryMenu = categoryNav?.querySelector("[data-category-menu]");
