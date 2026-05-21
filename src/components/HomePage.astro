@@ -1,0 +1,644 @@
+﻿---
+import Layout from '../layouts/Layout.astro';
+import { getItemTitle, localizedPath } from '../utils/i18n.js';
+import { categories, getSubcategoryName } from '../utils/categories.js';
+import { getImageSet } from '../utils/images.js';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+
+const currentLocale = Astro.props.locale || Astro.currentLocale || 'bg';
+const allAntiques = await getCollection('antiques');
+type AntiqueImage = CollectionEntry<'antiques'>['data']['images'][number];
+
+const getImageUrl = (image: AntiqueImage) => typeof image === 'string' ? image : image.url;
+const getCardImageSet = (item: CollectionEntry<'antiques'>) => {
+  const image = item.data.images?.[item.data.images.length - 1];
+  return image ? getImageSet(getImageUrl(image)) : null;
+};
+
+const sortByRecentDate = (a: CollectionEntry<'antiques'>, b: CollectionEntry<'antiques'>) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  if (dateA !== dateB) return dateB - dateA;
+  return b.id.localeCompare(a.id);
+};
+
+const featuredItems = allAntiques
+  .filter((item) => item.data.featured)
+  .sort(sortByRecentDate)
+  .slice(0, 4);
+
+const newestItems = allAntiques
+  .filter((item) => item.data.new === true)
+  .sort(sortByRecentDate)
+  .slice(0, 4);
+
+const bgCopy = {
+    heroTitle: 'Истории, запазени във времето',
+    heroText: 'Открийте редки антики и артефакти, които носят следи от минали епохи, култури и човешки ръце.',
+    browse: 'Разгледайте колекцията',
+    story: 'Нашата история',
+    featuredEyebrow: 'Подбрани антики',
+    featuredTitle: 'Избрани предмети',
+    featuredText: 'Най-новите акценти от колекцията, отбелязани като специално подбрани заради произход, майсторство и силно присъствие.',
+    viewAll: 'Виж всички',
+    noImage: '[Няма изображение]',
+    selected: 'Избрано',
+    viewDetails: 'Виж детайли',
+    previous: 'Предишен предмет',
+    next: 'Следващ предмет',
+    photos: 'снимки',
+    price: 'Цена',
+    shopEyebrow: 'Антикварен магазин Берлин',
+    founded: 'Основан Х година',
+    shopLocation: 'Антикварен магазин във Варна',
+    aboutText: 'Всяка вещ носи контекст, памет и следи от ръката, която я е създала. Подбираме предмети с доказуем характер и ги представяме с внимание към произхода, материала и мястото им в една жива колекция.',
+    moreAbout: 'Повече за нас',
+    newestEyebrow: 'Подбрана колекция',
+    newestTitle: 'Нови постъпления',
+    newestText: 'Последните добавени обекти в колекцията, отличаващи се с рядкост, история и изразителен характер.',
+    new: 'Ново',
+    trustEyebrow: 'Доверие и експертиза',
+    whyTitle: 'Защо да изберете нас',
+    whyText: 'Работим с внимание към всеки клиент и към всяка вещ. Подхождаме професионално от първия разговор до финалния избор, като даваме ясна, точна и пълна информация за произхода, състоянието, материалите и особеностите на продуктите.',
+    serviceTitle: 'Професионално отношение',
+    serviceText: 'Отговаряме коректно, спокойно и подробно, за да може всеки клиент да вземе информирано решение без прибързаност.',
+    infoTitle: 'Пълна информация',
+    infoText: 'Представяме важните детайли за всеки предмет: история, категория, видими следи от времето, състояние и характерни качества.',
+    qualityTitle: 'Качество на селекцията',
+    qualityText: 'Подбираме антики и колекционерски предмети с автентично присъствие, добра изработка и стойност за дом, интериор или лична колекция.',
+    visit: 'Посетете ни',
+    contactTitle: 'Контакти и работно време',
+    contactCta: 'Свържете се с нас',
+    address: 'Адрес',
+    addressText: 'Varna Center Odesos, бул. Княгиня Мария Луиза 5А, 9000 Varna',
+    hours: 'Работно време',
+    weekdays: 'Понеделник - Петък:',
+    weekend: 'Събота - Неделя:',
+    closed: 'Затворено',
+    phone: 'Телефон',
+};
+
+const enCopy = {
+    heroTitle: 'Stories Preserved Through Time',
+    heroText: 'Discover rare antiques and artifacts that carry traces of past eras, cultures, and human craftsmanship.',
+    browse: 'Browse the collection',
+    story: 'Our story',
+    featuredEyebrow: 'Curated antiques',
+    featuredTitle: 'Featured pieces',
+    featuredText: 'Recent highlights from the collection, selected for provenance, craftsmanship, and distinctive presence.',
+    viewAll: 'View all',
+    noImage: '[No image]',
+    selected: 'Featured',
+    viewDetails: 'View details',
+    previous: 'Previous item',
+    next: 'Next item',
+    photos: 'photos',
+    price: 'Price',
+    shopEyebrow: 'Antique Shop Berlin',
+    founded: 'Established in X',
+    shopLocation: 'Antique shop in Varna',
+    aboutText: 'Every object carries context, memory, and traces of the hand that made it. We select pieces with a clear character and present them with attention to origin, material, and their place in a living collection.',
+    moreAbout: 'More about us',
+    newestEyebrow: 'Curated collection',
+    newestTitle: 'New arrivals',
+    newestText: 'The latest additions to the collection, chosen for rarity, history, and expressive character.',
+    new: 'New',
+    trustEyebrow: 'Trust and expertise',
+    whyTitle: 'Why choose us',
+    whyText: 'We work with care for every client and every object. From the first conversation to the final choice, we provide clear, accurate, and complete information about origin, condition, materials, and notable details.',
+    serviceTitle: 'Professional service',
+    serviceText: 'We respond clearly, calmly, and in detail, so every client can make an informed decision without pressure.',
+    infoTitle: 'Complete information',
+    infoText: 'We present the important details of each piece: history, category, visible signs of age, condition, and defining qualities.',
+    qualityTitle: 'Quality of selection',
+    qualityText: 'We select antiques and collectible objects with authentic presence, fine workmanship, and value for the home, interior, or private collection.',
+    visit: 'Visit us',
+    contactTitle: 'Contact and opening hours',
+    contactCta: 'Contact us',
+    address: 'Address',
+    addressText: 'Varna Center Odesos, Knyaginya Maria Luiza Blvd. 5A, 9000 Varna, Bulgaria',
+    hours: 'Opening hours',
+    weekdays: 'Monday - Friday:',
+    weekend: 'Saturday - Sunday:',
+    closed: 'Closed',
+    phone: 'Phone',
+};
+
+const c = currentLocale === 'en' ? enCopy : bgCopy;
+const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
+  const category = categories.find((category) => category.name === item.data.category);
+  return getSubcategoryName(category, item.data.subcategory, currentLocale);
+};
+---
+
+<Layout bodyClass="bg-[#003000]" description={{ bg: "Подбрани антики, редки предмети и артефакти с история и характер.", en: "Curated antiques, rare objects, and artifacts with history and character." }}>
+  <!-- Hero Section -->
+  <section class="relative h-[80vh] flex items-center overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="/images/hero-image-1536.webp"
+        srcset="/images/hero-image-640.webp 640w, /images/hero-image-1024.webp 1024w, /images/hero-image-1536.webp 1536w"
+        sizes="100vw"
+        width="1536"
+        height="1024"
+        alt="Elegant Antique Living Room" 
+        class="w-full h-full object-cover"
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+    
+    <!-- Blur Overlay (Left side only) -->
+    <div class="absolute inset-y-0 left-0 w-full md:w-2/3 backdrop-blur-[3px] z-10 [mask-image:linear-gradient(to_right,black_50%,transparent)]"></div>
+    
+    <!-- Gradient Overlay: Darker on the left for text readability -->
+    <div class="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/40 to-transparent z-20"></div>
+    
+    <div class="relative z-30 container mx-auto px-4 text-white">
+      <div class="max-w-3xl">
+        <h1 class="text-5xl md:text-7xl font-serif font-bold mb-4 drop-shadow-lg leading-tight">
+          {c.heroTitle}
+        </h1>
+        
+        <!-- Fancy Breakline -->
+        <div class="flex items-center gap-4 mb-8 max-w-2xl">
+          <div class="h-[1px] flex-grow bg-gradient-to-r from-transparent via-amber-500/50 to-amber-500"></div>
+          <div class="w-3 h-3 rotate-45 border border-amber-500 flex-shrink-0"></div>
+          <div class="h-[1px] flex-grow bg-gradient-to-l from-transparent via-amber-500/50 to-amber-500"></div>
+        </div>
+
+        <p class="text-xl md:text-2xl mb-10 max-w-2xl drop-shadow-md text-stone-100 leading-relaxed">
+          {c.heroText}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href={localizedPath(currentLocale, "/categories")} class="bg-[#c5a059] hover:bg-[#d4af37] text-stone-950 px-10 py-4 rounded font-bold transition-all shadow-lg transform hover:scale-105 text-center">
+            {c.browse}
+          </a>          <a href={localizedPath(currentLocale, "/about")} class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-10 py-4 rounded font-bold transition-all text-center">
+            {c.story}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Items Section -->
+  <section class="bg-[#003000] py-16 sm:py-20 lg:py-24">
+    <div class="container mx-auto px-4">
+      <div class="mb-10 flex flex-col gap-6 border-b border-white/10 pb-8 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
+        <div class="max-w-2xl">
+          <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-[#c5a059]">
+            {c.featuredEyebrow}
+          </span>
+          <h2 class="font-serif text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+            {c.featuredTitle}
+          </h2>
+          <p class="mt-4 max-w-xl text-base leading-relaxed text-stone-300 sm:text-lg">
+            {c.featuredText}
+          </p>
+        </div>
+        <a href={localizedPath(currentLocale, "/categories")} class="inline-flex w-fit items-center justify-center rounded border border-[#c5a059]/70 px-5 py-3 text-sm font-bold uppercase tracking-wide text-[#c5a059] transition-all hover:bg-[#c5a059] hover:text-[#003000]">
+          {c.viewAll}
+          <span class="ml-2" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="relative sm:hidden" data-item-carousel>
+        <div class="overflow-hidden">
+          {featuredItems.map((item, index) => {
+            const imageSet = getCardImageSet(item);
+            return (
+          <article class={`group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 ${index === 0 ? '' : 'hidden'}`} data-carousel-slide>
+            <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
+              <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
+                {imageSet ? (
+                  <img
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="100vw"
+                    alt={getItemTitle(item, currentLocale)}
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
+                    {c.noImage}
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  {c.selected}
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                  <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                    {c.viewDetails}
+                  </span>
+                  <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} {c.photos}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div class="p-5">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+                  {getItemSubcategory(item)}
+                </p>
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950">
+                  {getItemTitle(item, currentLocale)}
+                </h3>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">{c.price}</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+            );
+          })}
+        </div>
+        {featuredItems.length > 1 && (
+          <>
+            <button type="button" class="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.previous} data-carousel-prev>
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <button type="button" class="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.next} data-carousel-next>
+              <span aria-hidden="true">&rsaquo;</span>
+            </button>
+          </>
+        )}
+      </div>
+
+      <div class="hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+        {featuredItems.map((item) => {
+          const imageSet = getCardImageSet(item);
+          return (
+          <article class="group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:border-[#c5a059]/70 hover:bg-white">
+            <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
+              <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
+                {imageSet ? (
+                  <img
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="(max-width: 1024px) 50vw, 25vw"
+                    alt={getItemTitle(item, currentLocale)}
+                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
+                    {c.noImage}
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  {c.selected}
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                  <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                    {c.viewDetails}
+                  </span>
+                  <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} {c.photos}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div class="p-5">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+                  {getItemSubcategory(item)}
+                </p>
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950 transition-colors group-hover:text-[#8a6a24]">
+                  {getItemTitle(item, currentLocale)}
+                </h3>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">{c.price}</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- About Highlight Section -->
+  <section class="bg-stone-100 py-16 text-stone-950 sm:py-20 lg:py-24">
+    <div class="container mx-auto px-4">
+      <div class="mx-auto max-w-4xl text-center">
+        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-[#8a6a24]">
+          {c.shopEyebrow}
+        </p>
+        <h2 class="mt-4 font-serif text-4xl font-bold leading-tight sm:text-5xl">
+          {c.founded}
+        </h2>
+        <p class="mt-4 text-xl font-semibold text-stone-700 sm:text-2xl">
+          {c.shopLocation}
+        </p>
+        <p class="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-stone-600 sm:text-lg">
+          {c.aboutText}
+        </p>
+        <a href={localizedPath(currentLocale, "/about")} class="mt-9 inline-flex justify-center rounded bg-[#8a6a24] px-8 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#6f551d]">
+          {c.moreAbout}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Items Section -->
+  <section class="bg-[#003000] py-16 sm:py-20 lg:py-24">
+    <div class="container mx-auto px-4">
+      <div class="mb-10 flex flex-col gap-6 border-b border-white/10 pb-8 sm:mb-12 sm:flex-row sm:items-end sm:justify-between">
+        <div class="max-w-2xl">
+          <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-[#c5a059]">
+            {c.newestEyebrow}
+          </span>
+          <h2 class="font-serif text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+            {c.newestTitle}
+          </h2>
+          <p class="mt-4 max-w-xl text-base leading-relaxed text-stone-300 sm:text-lg">
+            {c.newestText}
+          </p>
+        </div>
+        <a href={localizedPath(currentLocale, "/categories")} class="inline-flex w-fit items-center justify-center rounded border border-[#c5a059]/70 px-5 py-3 text-sm font-bold uppercase tracking-wide text-[#c5a059] transition-all hover:bg-[#c5a059] hover:text-[#003000]">
+          {c.viewAll}
+          <span class="ml-2" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="relative sm:hidden" data-item-carousel>
+        <div class="overflow-hidden">
+          {newestItems.map((item, index) => {
+            const imageSet = getCardImageSet(item);
+            return (
+          <article class={`group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 ${index === 0 ? '' : 'hidden'}`} data-carousel-slide>
+            <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
+              <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
+                {imageSet ? (
+                  <img
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="100vw"
+                    alt={getItemTitle(item, currentLocale)}
+                    class="absolute inset-0 h-full w-full object-cover"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
+                    {c.noImage}
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  {c.new}
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                  <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                    {c.viewDetails}
+                  </span>
+                  <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} {c.photos}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div class="p-5">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+                  {getItemSubcategory(item)}
+                </p>
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950">
+                  {getItemTitle(item, currentLocale)}
+                </h3>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">{c.price}</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+            );
+          })}
+        </div>
+        {newestItems.length > 1 && (
+          <>
+            <button type="button" class="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.previous} data-carousel-prev>
+              <span aria-hidden="true">&lsaquo;</span>
+            </button>
+            <button type="button" class="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-stone-950/75 text-2xl leading-none text-white shadow-lg backdrop-blur transition-colors hover:bg-[#c5a059] hover:text-stone-950 focus:outline-none focus:ring-2 focus:ring-[#c5a059]" aria-label={c.next} data-carousel-next>
+              <span aria-hidden="true">&rsaquo;</span>
+            </button>
+          </>
+        )}
+      </div>
+
+      <div class="hidden gap-6 sm:grid sm:grid-cols-2 lg:grid-cols-4">
+        {newestItems.map((item) => {
+          const imageSet = getCardImageSet(item);
+          return (
+          <article class="group overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-xl shadow-black/10 transition-all duration-300 hover:-translate-y-1 hover:border-[#c5a059]/70 hover:bg-white">
+            <a href={localizedPath(currentLocale, `/antiques/${item.id}`)} class="block">
+              <div class="relative aspect-[4/5] overflow-hidden bg-stone-900">
+                {imageSet ? (
+                  <img
+                    src={imageSet.medium}
+                    srcset={`${imageSet.small} 400w, ${imageSet.medium} 800w, ${imageSet.large} 1200w`}
+                    sizes="(max-width: 1024px) 50vw, 25vw"
+                    alt={getItemTitle(item, currentLocale)}
+                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div class="absolute inset-0 flex items-center justify-center px-6 text-center text-sm italic text-stone-500">
+                    {c.noImage}
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-950/75 via-stone-950/5 to-transparent opacity-80"></div>
+                <div class="hidden">
+                  {c.new}
+                </div>
+                <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
+                  <span class="rounded bg-white/95 px-3 py-2 text-xs font-bold uppercase tracking-wide text-stone-900 shadow-lg">
+                    {c.viewDetails}
+                  </span>
+                  <span class="h-px flex-1 bg-[#c5a059]/70"></span>
+                  {item.data.images && item.data.images.length > 1 && (
+                    <span class="hidden">
+                      {item.data.images.length} {c.photos}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div class="p-5">
+                <p class="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+                  {getItemSubcategory(item)}
+                </p>
+                <h3 class="min-h-14 font-serif text-xl font-bold leading-snug text-stone-950 transition-colors group-hover:text-[#8a6a24]">
+                  {getItemTitle(item, currentLocale)}
+                </h3>
+                <div class="mt-5 flex items-center justify-between border-t border-stone-200 pt-4">
+                  <span class="text-sm text-stone-500">{c.price}</span>
+                  <span class="font-serif text-lg font-bold text-[#8a6a24]">€{item.data.price?.toLocaleString() || 'N/A'}</span>
+                </div>
+              </div>
+            </a>
+          </article>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section class="bg-stone-950 py-16 text-white sm:py-20 lg:py-24">
+    <div class="container mx-auto px-4">
+      <div class="mx-auto max-w-5xl">
+        <div class="max-w-3xl">
+          <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-[#c5a059]">
+            {c.trustEyebrow}
+          </span>
+          <h2 class="font-serif text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+            {c.whyTitle}
+          </h2>
+          <p class="mt-5 text-base leading-relaxed text-stone-300 sm:text-lg">
+            {c.whyText}
+          </p>
+        </div>
+
+        <div class="mt-10 grid gap-5 md:grid-cols-3">
+          <div class="rounded-lg border border-white/10 bg-white/[0.04] p-6">
+            <h3 class="font-serif text-xl font-bold text-white">{c.serviceTitle}</h3>
+            <p class="mt-4 text-sm leading-relaxed text-stone-300">
+              {c.serviceText}
+            </p>
+          </div>
+          <div class="rounded-lg border border-white/10 bg-white/[0.04] p-6">
+            <h3 class="font-serif text-xl font-bold text-white">{c.infoTitle}</h3>
+            <p class="mt-4 text-sm leading-relaxed text-stone-300">
+              {c.infoText}
+            </p>
+          </div>
+          <div class="rounded-lg border border-white/10 bg-white/[0.04] p-6">
+            <h3 class="font-serif text-xl font-bold text-white">{c.qualityTitle}</h3>
+            <p class="mt-4 text-sm leading-relaxed text-stone-300">
+              {c.qualityText}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Details Section -->
+  <section class="bg-stone-100 py-16 text-stone-950 sm:py-20 lg:py-24">
+    <div class="container mx-auto px-4">
+      <div class="mb-10 max-w-3xl">
+        <span class="mb-3 block text-sm font-semibold uppercase tracking-[0.24em] text-[#8a6a24]">
+          {c.visit}
+        </span>
+        <h2 class="font-serif text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+          {c.contactTitle}
+        </h2>
+        <a href={localizedPath(currentLocale, "/contact")} class="mt-6 inline-flex justify-center rounded bg-[#8a6a24] px-7 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-[#6f551d]">
+          {c.contactCta}
+        </a>
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-lg border border-stone-200 bg-white p-6 shadow-lg shadow-stone-950/5">
+          <div class="mb-5 flex h-12 w-12 items-center justify-center rounded bg-[#8a6a24] text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <h3 class="font-serif text-xl font-bold">{c.address}</h3>
+          <p class="mt-3 text-sm leading-relaxed text-stone-600">
+            {c.addressText}
+          </p>
+        </div>
+
+        <div class="rounded-lg border border-stone-200 bg-white p-6 shadow-lg shadow-stone-950/5">
+          <div class="mb-5 flex h-12 w-12 items-center justify-center rounded bg-[#8a6a24] text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <h3 class="font-serif text-xl font-bold">{c.hours}</h3>
+          <div class="mt-3 space-y-3 text-sm leading-relaxed text-stone-600">
+            <p>
+              <span class="block font-semibold text-stone-800">{c.weekdays}</span>
+              10:00 - 16:00
+            </p>
+            <p>
+              <span class="block font-semibold text-stone-800">{c.weekend}</span>
+              {c.closed}
+            </p>
+          </div>
+        </div>
+
+        <div class="rounded-lg border border-stone-200 bg-white p-6 shadow-lg shadow-stone-950/5">
+          <div class="mb-5 flex h-12 w-12 items-center justify-center rounded bg-[#8a6a24] text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.11 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L8 9.72a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.61.62A2 2 0 0 1 22 16.92Z"></path>
+            </svg>
+          </div>
+          <h3 class="font-serif text-xl font-bold">{c.phone}</h3>
+          <a href="tel:+359895361505" class="mt-3 inline-block text-sm font-semibold text-stone-600 transition-colors hover:text-[#8a6a24]">
+            +359 895361505
+          </a>
+        </div>
+
+        <div class="rounded-lg border border-stone-200 bg-white p-6 shadow-lg shadow-stone-950/5">
+          <div class="mb-5 flex h-12 w-12 items-center justify-center rounded bg-[#8a6a24] text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+              <path d="m22 7-8.97 5.7a2 2 0 0 1-2.06 0L2 7"></path>
+            </svg>
+          </div>
+          <h3 class="font-serif text-xl font-bold">Email</h3>
+          <a href="mailto:antiqueshop.berlin@gmail.com" class="mt-3 inline-block break-words text-sm font-semibold text-stone-600 transition-colors hover:text-[#8a6a24]">
+            antiqueshop.berlin@gmail.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.querySelectorAll<HTMLElement>('[data-item-carousel]').forEach((carousel) => {
+      const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-slide]'));
+      const previousButton = carousel.querySelector<HTMLButtonElement>('[data-carousel-prev]');
+      const nextButton = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
+      let activeIndex = 0;
+
+      const showSlide = (nextIndex: number) => {
+        if (slides.length === 0) return;
+
+        activeIndex = (nextIndex + slides.length) % slides.length;
+        slides.forEach((slide, index) => {
+          slide.classList.toggle('hidden', index !== activeIndex);
+        });
+      };
+
+      previousButton?.addEventListener('click', () => showSlide(activeIndex - 1));
+      nextButton?.addEventListener('click', () => showSlide(activeIndex + 1));
+    });
+  </script>
+</Layout>
+
+
+
