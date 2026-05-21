@@ -618,14 +618,14 @@ const getItemSubcategory = (item: CollectionEntry<'antiques'>) => {
     </div>
   </section>
 
-  <script>
-    document.querySelectorAll<HTMLElement>('[data-item-carousel]').forEach((carousel) => {
-      const slides = Array.from(carousel.querySelectorAll<HTMLElement>('[data-carousel-slide]'));
-      const previousButton = carousel.querySelector<HTMLButtonElement>('[data-carousel-prev]');
-      const nextButton = carousel.querySelector<HTMLButtonElement>('[data-carousel-next]');
+  <script is:inline>
+    document.querySelectorAll('[data-item-carousel]').forEach((carousel) => {
+      const slides = Array.from(carousel.querySelectorAll('[data-carousel-slide]'));
+      const previousButton = carousel.querySelector('[data-carousel-prev]');
+      const nextButton = carousel.querySelector('[data-carousel-next]');
       let activeIndex = 0;
 
-      const showSlide = (nextIndex: number) => {
+      const showSlide = (nextIndex) => {
         if (slides.length === 0) return;
 
         activeIndex = (nextIndex + slides.length) % slides.length;

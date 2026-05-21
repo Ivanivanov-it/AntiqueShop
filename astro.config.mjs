@@ -136,6 +136,9 @@ function cmsProxyLogger() {
 
 // https://astro.build/config
 export default defineConfig({
+  devToolbar: {
+    enabled: false,
+  },
   i18n: {
     defaultLocale: 'bg',
     locales: ['bg', 'en'],
