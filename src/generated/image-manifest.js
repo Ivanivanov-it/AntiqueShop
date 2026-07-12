@@ -29,6 +29,31 @@ const imageManifest = {
     "medium": "/images/optimized/1000075132-01-ec5ef82c76-800.webp",
     "large": "/images/optimized/1000075132-01-ec5ef82c76-1200.webp"
   },
+  "/images/uploads/1000075462-01.jpeg": {
+    "small": "/images/optimized/1000075462-01-4fcda10ff1-400.webp",
+    "medium": "/images/optimized/1000075462-01-4fcda10ff1-800.webp",
+    "large": "/images/optimized/1000075462-01-4fcda10ff1-1200.webp"
+  },
+  "/images/uploads/1000075465-01.jpeg": {
+    "small": "/images/optimized/1000075465-01-4aa7d3c451-400.webp",
+    "medium": "/images/optimized/1000075465-01-4aa7d3c451-800.webp",
+    "large": "/images/optimized/1000075465-01-4aa7d3c451-1200.webp"
+  },
+  "/images/uploads/1000075467-01.jpeg": {
+    "small": "/images/optimized/1000075467-01-33c4d0bf27-400.webp",
+    "medium": "/images/optimized/1000075467-01-33c4d0bf27-800.webp",
+    "large": "/images/optimized/1000075467-01-33c4d0bf27-1200.webp"
+  },
+  "/images/uploads/1000075468-01.jpeg": {
+    "small": "/images/optimized/1000075468-01-294b904d71-400.webp",
+    "medium": "/images/optimized/1000075468-01-294b904d71-800.webp",
+    "large": "/images/optimized/1000075468-01-294b904d71-1200.webp"
+  },
+  "/images/uploads/1000075469-01.jpeg": {
+    "small": "/images/optimized/1000075469-01-5dc62fe09a-400.webp",
+    "medium": "/images/optimized/1000075469-01-5dc62fe09a-800.webp",
+    "large": "/images/optimized/1000075469-01-5dc62fe09a-1200.webp"
+  },
   "/images/uploads/1000076621-01.jpeg": {
     "small": "/images/optimized/1000076621-01-57e2354780-400.webp",
     "medium": "/images/optimized/1000076621-01-57e2354780-800.webp",
