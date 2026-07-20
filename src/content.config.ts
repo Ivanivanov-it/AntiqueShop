@@ -12,6 +12,7 @@ const antiques = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/antiques" }),
   schema: z.object({
     title: z.string(),
+    sourceUrl: z.string().url().optional().or(z.literal("")),
     description: z.string(),
     category: z.string(),
     subcategory: z.string().optional().or(z.literal("")),

@@ -24,16 +24,17 @@ collections:
 
     fields:
       - { label: "Latin slug", name: "latinSlug", widget: "hidden", required: false }
-      - { label: "Име", name: "title", widget: "string" }
+      - { label: "URL", name: "sourceUrl", widget: "balkan-auction-url", required: false, hint: "Поставете връзка към продукт в BalkanAuction и натиснете „Попълни“." }
+      - { label: "Име", name: "title", widget: "importable-title" }
 
-      - { label: "Описание", name: "description", widget: "text" }
+      - { label: "Описание", name: "description", widget: "importable-description" }
 
       - { label: "Категория", name: "category", id: "category", widget: "select",
           options: ["Антикварни часовници", "Порцелан", "Старинни бижута", "Изобразително изкуство", "Колекционерски предмети","Етника и Фолклор","Книги","Сувенири и Подараци","Военни предмети"] }
 
       - { label: "Подкатегория", name: "subcategory", widget: "dependent-select", required: false }
 
-      - { label: "Цена", name: "price", widget: "number" }
+      - { label: "Цена", name: "price", widget: "importable-price" }
 
       - { label: "Препоръчан", "name": "featured", widget: "boolean", default: false, required: false }
 
@@ -41,7 +42,7 @@ collections:
 
       - { label: "Нов", "name": "new",  widget: "boolean", default: true, required: false }
       
-      - { label: "Дата на добавяне", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false, required: false }
+      - { label: "Дата на добавяне", name: "date", widget: "datetime", default: "{{now}}", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false, required: false }
 
       - label: "Снимки"
         name: "images"

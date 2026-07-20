@@ -5,6 +5,10 @@ import { execFile } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  BalkanAuctionImportError,
+  importBalkanAuctionProduct,
+} from './src/lib/balkan-auction.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cmsLogPath = path.join(__dirname, '.cms-proxy.log');
@@ -52,6 +56,59 @@ function cmsProxyLogger() {
   return {
     name: 'cms-proxy-logger',
     configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const pathname = new URL(req.url || '/', 'http://localhost').pathname;
+        if (pathname !== '/api/import-balkanauction') {
+          next();
+          return;
+        }
+
+        res.setHeader('content-type', 'application/json; charset=utf-8');
+        res.setHeader('cache-control', 'no-store');
+
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          res.end(JSON.stringify({ error: 'Методът не е позволен.' }));
+          return;
+        }
+
+        try {
+          const chunks = [];
+          let bodyLength = 0;
+
+          for await (const chunk of req) {
+            bodyLength += chunk.length;
+            if (bodyLength > 8192) {
+              res.statusCode = 413;
+              res.end(JSON.stringify({ error: 'Заявката е прекалено голяма.' }));
+              return;
+            }
+            chunks.push(chunk);
+          }
+
+          const body = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+          const product = await importBalkanAuctionProduct(body?.url);
+          res.statusCode = 200;
+          res.end(JSON.stringify(product));
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            res.statusCode = 400;
+            res.end(JSON.stringify({ error: 'Невалидна заявка.' }));
+            return;
+          }
+
+          if (error instanceof BalkanAuctionImportError) {
+            res.statusCode = error.status;
+            res.end(JSON.stringify({ error: error.message }));
+            return;
+          }
+
+          console.error('Unexpected BalkanAuction import error', error);
+          res.statusCode = 500;
+          res.end(JSON.stringify({ error: 'Продуктът не може да бъде импортиран.' }));
+        }
+      });
+
       server.middlewares.use((req, res, next) => {
         if (req.method === 'POST' && req.url?.startsWith('/api/cms-refresh')) {
           res.statusCode = 202;
